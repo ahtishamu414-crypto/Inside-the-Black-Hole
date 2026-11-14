@@ -1,0 +1,8 @@
+node_modules/
+dist/
+video_frames/
+temp_frames/
+test.mp4
+*.log
+.DS_Store
+Thumbs.db

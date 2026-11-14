@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;padding:0;background:#080D17;height:100%;}
+*{box-sizing:border-box;}
+a{color:#55DDE0;text-decoration:none;}
+a:hover{color:#E8F0FA;}
+input[type=range]{height:18px;}
+::-webkit-scrollbar{width:8px;height:8px;}::-webkit-scrollbar-thumb{background:#1B283B;}
+</style>
+<script src="bh-viz.js"></script>
+</helmet>
+<div style="display:grid;grid-template-rows:56px 40px minmax(0,1fr) 30px;grid-template-columns:216px minmax(0,1fr);height:100vh;background:#080D17;color:#E8F0FA;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:13px;">
+
+<!-- TOP STATUS BAR -->
+<div style="grid-column:1 / span 2;display:flex;align-items:center;gap:20px;padding:0 16px;border-bottom:1px solid #1B283B;background:#0B1220;min-width:0;">
+  <div style="display:flex;align-items:center;gap:11px;width:200px;flex-shrink:0;">
+    <div style="width:22px;height:22px;border-radius:50%;background:#000;box-shadow:0 0 0 2px #0B1220, 0 0 0 3.5px #FFB547;flex-shrink:0;"></div>
+    <div style="display:flex;flex-direction:column;gap:1px;">
+      <div style="font-size:12px;font-weight:600;letter-spacing:.07em;">BLACK HOLE MISSION CONTROL</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8FA3B8;letter-spacing:.06em;">MISSION ID · BH-5000</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:7px;padding:4px 10px;border:1px solid {{ statusColor }};border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:{{ statusColor }};flex-shrink:0;">
+    <div style="width:6px;height:6px;border-radius:50%;background:{{ statusColor }};"></div>{{ statusText }}
+  </div>
+  <div style="display:flex;flex-direction:column;gap:1px;flex-shrink:0;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8FA3B8;letter-spacing:.08em;">SIM CLOCK</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;">{{ simDate }}</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:1px;flex-shrink:0;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8FA3B8;letter-spacing:.08em;">MISSION ELAPSED</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;">{{ met }}</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:1px;flex-shrink:0;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8FA3B8;letter-spacing:.08em;">SYSTEM HEALTH</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:{{ healthColor }};">{{ healthText }}</div>
+  </div>
+  <div style="flex:1;"></div>
+  <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+    <button onClick="{{ start }}" style="height:30px;padding:0 12px;border:1px solid #55DDE0;background:#55DDE0;color:#080D17;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.06em;border-radius:2px;cursor:pointer;opacity:{{ ops.start }};">START</button>
+    <button onClick="{{ pause }}" style="height:30px;padding:0 12px;border:1px solid #2A3B52;background:#101A2A;color:#E8F0FA;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;border-radius:2px;cursor:pointer;opacity:{{ ops.pause }};">PAUSE</button>
+    <button onClick="{{ resume }}" style="height:30px;padding:0 12px;border:1px solid #2A3B52;background:#101A2A;color:#E8F0FA;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;border-radius:2px;cursor:pointer;opacity:{{ ops.resume }};">RESUME</button>
+    <button onClick="{{ stepOnce }}" style="height:30px;padding:0 12px;border:1px solid #2A3B52;background:#101A2A;color:#E8F0FA;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;border-radius:2px;cursor:pointer;opacity:{{ ops.step }};">STEP +1h</button>
+    <button onClick="{{ reset }}" style="height:30px;padding:0 12px;border:1px solid #2A3B52;background:#101A2A;color:#E8F0FA;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;border-radius:2px;cursor:pointer;opacity:{{ ops.reset }};">RESET</button>
+  </div>
+  <div style="display:flex;border:1px solid #2A3B52;border-radius:2px;flex-shrink:0;">
+    <sc-for list="{{ speeds }}" as="s" hint-placeholder-count="4">
+      <button onClick="{{ s.set }}" style="height:28px;width:36px;border:none;background:{{ s.bg }};color:{{ s.color }};font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer;">{{ s.label }}</button>
+    </sc-for>
+  </div>
+  <div style="width:30px;height:30px;border-radius:50%;border:1px solid #2A3B52;background:#101A2A;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;flex-shrink:0;">MD</div>
+</div>
+
+<!-- GAME BAR -->
+<div style="grid-column:1 / span 2;display:flex;align-items:center;gap:14px;padding:0 16px;border-bottom:1px solid #1B283B;background:#0A101C;min-width:0;overflow:hidden;">
+  <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;color:#4E6177;">DIFFICULTY</span>
+  <div style="display:flex;border:1px solid #2A3B52;border-radius:2px;opacity:{{ ops.cfg }};">
+    <sc-for list="{{ diffOpts }}" as="d" hint-placeholder-count="3">
+      <button title="{{ d.tip }}" onClick="{{ d.set }}" style="height:26px;padding:0 12px;border:none;background:{{ d.bg }};color:{{ d.color }};font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.04em;cursor:pointer;">{{ d.label }}</button>
+    </sc-for>
+  </div>
+  <button title="Sandbox: unlimited budget, fuel and rocket weight so you can experiment freely. Scores are not ranked." onClick="{{ toggleSandbox }}" style="height:28px;padding:0 10px;border:1px solid {{ sbBorder }};background:transparent;color:{{ sbColor }};font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.04em;border-radius:2px;cursor:pointer;opacity:{{ ops.cfg }};">SANDBOX MODE · {{ sbText }}</button>
+  <div style="width:1px;height:20px;background:#1B283B;"></div>
+  <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;color:#4E6177;">CREW</span>
+  <div style="display:flex;border:1px solid #2A3B52;border-radius:2px;opacity:{{ ops.cfg }};">
+    <sc-for list="{{ modeOpts }}" as="d" hint-placeholder-count="2">
+      <button title="{{ d.tip }}" onClick="{{ d.set }}" style="height:26px;padding:0 12px;border:none;background:{{ d.bg }};color:{{ d.color }};font-family:'IBM Plex Mono',monospace;font-size:10.5px;cursor:pointer;">{{ d.label }}</button>
+    </sc-for>
+  </div>
+  <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;white-space:nowrap;">{{ crewText }}</span>
+  <div style="flex:1;"></div>
+  <button onClick="{{ openGuide }}" style="height:28px;padding:0 12px;border:1px solid #55DDE0;background:transparent;color:#55DDE0;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.05em;border-radius:2px;cursor:pointer;flex-shrink:0;">? HOW TO PLAY</button>
+</div>
+
+<!-- SIDEBAR -->
+<div style="border-right:1px solid #1B283B;background:#0A101C;display:flex;flex-direction:column;padding:14px 0;min-height:0;overflow:auto;">
+  <div style="padding:0 16px 8px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#4E6177;">OPERATIONS</div>
+  <sc-for list="{{ nav }}" as="n" hint-placeholder-count="6">
+    <div onClick="{{ n.go }}" style="display:flex;align-items:center;gap:10px;padding:9px 16px 9px 13px;border-left:3px solid {{ n.bar }};background:{{ n.bg }};color:{{ n.color }};cursor:pointer;font-size:12.5px;" style-hover="background:rgba(85,221,224,0.05);">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:{{ n.nc }};">{{ n.n }}</span>{{ n.label }}
+    </div>
+  </sc-for>
+  <div style="padding:18px 16px 8px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#4E6177;">POST-MISSION</div>
+  <sc-for list="{{ nav2 }}" as="n" hint-placeholder-count="1">
+    <div onClick="{{ n.go }}" style="display:flex;align-items:center;gap:10px;padding:9px 16px 9px 13px;border-left:3px solid {{ n.bar }};background:{{ n.bg }};color:{{ n.color }};cursor:pointer;font-size:12.5px;" style-hover="background:rgba(85,221,224,0.05);">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:{{ n.nc }};">{{ n.n }}</span>{{ n.label }}
+    </div>
+  </sc-for>
+  <div style="flex:1;"></div>
+  <div style="margin:12px 14px 0;padding:10px;border:1px solid #1B283B;border-radius:3px;display:flex;flex-direction:column;gap:6px;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:#8FA3B8;">RUN {{ missionNo }} · STEP = 1 h</div>
+    <div style="font-size:11px;line-height:1.45;color:#8FA3B8;text-wrap:pretty;">Educational mission-design simulator. Not a real spacecraft control system.</div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div style="overflow:auto;min-height:0;background-color:#080D17;background-image:linear-gradient(rgba(85,221,224,0.022) 1px,transparent 1px),linear-gradient(90deg,rgba(85,221,224,0.022) 1px,transparent 1px);background-size:32px 32px;">
+<div style="padding:20px 24px 40px;min-width:1180px;display:flex;flex-direction:column;gap:16px;position:relative;">
+<sc-if value="{{ infoCur.show }}" hint-placeholder-val="{{ false }}">
+  <div onMouseEnter="{{ infoOn }}" onMouseLeave="{{ infoOff }}" style="position:absolute;top:4px;right:4px;z-index:20;">
+    <div onClick="{{ infoToggle }}" title="NASA source for this module" style="width:18px;height:18px;border:1px solid #4E6177;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8FA3B8;cursor:pointer;" style-hover="color:#55DDE0;border-color:#55DDE0;">i</div>
+    <sc-if value="{{ infoCur.open }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;top:18px;right:0;padding-top:6px;"><div style="padding:8px 10px;background:#0B1220;border:1px solid #2A3B52;border-radius:3px;white-space:nowrap;"><a href="{{ infoCur.url }}" target="_blank" rel="noopener" style="font-family:'IBM Plex Mono',monospace;font-size:11px;">{{ infoCur.url }}</a></div></div>
+    </sc-if>
+  </div>
+</sc-if>
+<sc-if value="{{ cfg.team }}" hint-placeholder-val="{{ false }}">
+  <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#101A2A;border:1px solid #1B283B;border-radius:4px;flex-wrap:wrap;">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:#8FA3B8;">CREW · TEAM MODE</span>
+    <sc-for list="{{ crew }}" as="m" hint-placeholder-count="4">
+      <button title="Click to add or remove this crew member before launch." onClick="{{ m.toggle }}" style="display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:5px 10px;border:1px solid {{ m.border }};background:{{ m.bg }};color:{{ m.color }};border-radius:2px;cursor:pointer;"><span style="font-size:11.5px;">{{ m.name }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#55DDE0;">{{ m.pri }}</span></button>
+    </sc-for>
+    <div style="flex:1;"></div>
+    <button onClick="{{ openVote }}" style="height:30px;padding:0 12px;border:1px solid #55DDE0;background:transparent;color:#55DDE0;font-family:'IBM Plex Mono',monospace;font-size:10.5px;border-radius:2px;cursor:pointer;">TEAM PRIORITY VOTE</button>
+  </div>
+</sc-if>
+
+<!-- ============ 01 MISSION OVERVIEW ============ -->
+<sc-if value="{{ is.overview }}" hint-placeholder-val="{{ true }}">
+  <div data-screen-label="01 Mission Overview" style="display:flex;flex-direction:column;gap:16px;">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;">
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div style="font-size:22px;font-weight:600;letter-spacing:.04em;">BLACK HOLE MISSION CONTROL</div>
+        <div style="font-size:13px;color:#8FA3B8;">Micro-Satellite Swarm Monitoring System</div>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8FA3B8;">TARGET · M = {{ massText }} · Rs = {{ rsText }}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;">
+      <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.07em;color:#8FA3B8;">TOTAL SWARM NODES</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:26px;">5,000</div>
+        <div style="font-size:11.5px;color:#8FA3B8;">160 external communication anchors</div>
+      </div>
+      <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.07em;color:#8FA3B8;">EXTERIOR OBSERVATION NODES</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:26px;color:#55DDE0;">{{ extText }}</div>
+        <div style="font-size:11.5px;color:#8FA3B8;">{{ opText }} operational</div>
+      </div>
+      <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.07em;color:#8FA3B8;">HYPOTHETICAL INSIDE-HORIZON MARKERS</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <button onClick="{{ markersDown }}" style="width:26px;height:26px;border:1px solid #2A3B52;background:#0B1220;color:#E8F0FA;border-radius:2px;cursor:pointer;font-family:'IBM Plex Mono',monospace;opacity:{{ ops.cfg }};">−</button>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:26px;color:#B7C3D1;min-width:44px;text-align:center;">{{ p.markers }}</div>
+          <button onClick="{{ markersUp }}" style="width:26px;height:26px;border:1px solid #2A3B52;background:#0B1220;color:#E8F0FA;border-radius:2px;cursor:pointer;font-family:'IBM Plex Mono',monospace;opacity:{{ ops.cfg }};">+</button>
+        </div>
+        <div style="font-size:11.5px;color:#8FA3B8;">Scenario markers only · no telemetry</div>
+      </div>
+      <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.07em;color:#8FA3B8;">MISSION STATUS</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:26px;color:{{ statusColor }};">{{ statusText }}</div>
+        <div style="font-size:11.5px;color:#8FA3B8;">{{ progressText }}</div>
+      </div>
+    </div>
+
+    <div data-screen-label="Mission Setup" style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+  <div onClick="{{ toggleSetup }}" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">MISSION SETUP &amp; TRADE-OFFS</div>
+    <div style="display:flex;align-items:center;gap:12px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;padding:2px 6px;border:1px solid {{ setupChipC }};color:{{ setupChipC }};border-radius:2px;">{{ setupChip }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;">{{ setupToggle }}</span></div>
+  </div>
+  <sc-if value="{{ setupOpen }}" hint-placeholder-val="{{ true }}">
+  <div style="padding:0 14px 14px;display:flex;flex-direction:column;gap:12px;border-top:1px solid #1B283B;padding-top:14px;">
+    <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;">
+      <sc-for list="{{ resGauges }}" as="g" hint-placeholder-count="6">
+        <div title="{{ g.tip }}" style="background:#0B1220;border:1px solid #1B283B;border-radius:3px;padding:8px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.06em;color:#8FA3B8;align-self:flex-start;">{{ g.label }}</div>
+          <div style="position:relative;width:96px;height:84px;"><canvas ref="{{ cv }}" data-kind="gauge" data-g="{{ g.key }}" style="width:96px;height:84px;display:block;"></canvas><div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:6px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:15px;color:{{ g.c }};">{{ g.v }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#8FA3B8;">{{ g.unit }}</span></div></div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) minmax(0,1.25fr);gap:12px;opacity:{{ ops.cfg }};">
+      <div style="background:#0B1220;border:1px solid #1B283B;border-radius:3px;padding:12px;display:flex;flex-direction:column;gap:9px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;color:#8FA3B8;">1 · MISSION SCENARIO</div><sc-for list="{{ scenarios }}" as="s" hint-placeholder-count="3"><div onClick="{{ s.pick }}" style="padding:9px 11px;border:1px solid {{ s.border }};background:{{ s.bg }};border-radius:3px;cursor:pointer;display:flex;flex-direction:column;gap:3px;"><span style="font-size:12.5px;font-weight:600;">{{ s.title }}</span><span style="font-size:11.5px;color:#8FA3B8;">{{ s.desc }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#55DDE0;">{{ s.goal }}</span></div></sc-for></div>
+      <div style="background:#0B1220;border:1px solid #1B283B;border-radius:3px;padding:12px;display:flex;flex-direction:column;gap:9px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;color:#8FA3B8;">2 · ORBIT &amp; LAUNCH VEHICLE</div><div style="display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #2A3B52;border-radius:2px;"><sc-for list="{{ orbitOpts }}" as="o" hint-placeholder-count="3"><button title="{{ o.tip }}" onClick="{{ o.set }}" style="padding:6px 4px;border:none;background:{{ o.bg }};color:{{ o.color }};cursor:pointer;display:flex;flex-direction:column;gap:2px;align-items:center;"><span style="font-size:11.5px;">{{ o.label }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;">{{ o.sub }}</span></button></sc-for></div><sc-for list="{{ vehicles }}" as="v" hint-placeholder-count="3"><div title="{{ v.tip }}" onClick="{{ v.pick }}" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 11px;border:1px solid {{ v.border }};background:{{ v.bg }};border-radius:3px;cursor:pointer;"><span style="font-size:12px;">{{ v.name }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8FA3B8;">{{ v.sub }}</span></div></sc-for><div style="display:flex;flex-direction:column;gap:4px;"><div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10.5px;"><span style="color:#8FA3B8;">PROBE WEIGHT / ROCKET LIMIT</span><span style="color:{{ payC }};">{{ payTxt }}</span></div><div style="height:5px;background:#1B283B;"><div style="height:100%;width:{{ payW }};background:{{ payC }};"></div></div></div><sc-if value="{{ over }}" hint-placeholder-val="{{ false }}"><div style="padding:8px 10px;border:1px solid rgba(255,92,100,0.6);background:rgba(255,92,100,0.07);border-radius:3px;font-size:11.5px;line-height:1.45;color:#FF8A90;">{{ overText }}</div></sc-if></div>
+      <div style="background:#0B1220;border:1px solid #1B283B;border-radius:3px;padding:12px;display:flex;flex-direction:column;gap:9px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;color:#8FA3B8;">3 · COMPONENT TRADE-OFFS</div><sc-for list="{{ partRows }}" as="r" hint-placeholder-count="3"><div title="{{ r.tip }}" style="display:flex;flex-direction:column;gap:5px;"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;"><span style="font-size:12px;">{{ r.label }}</span><div style="display:flex;border:1px solid #2A3B52;border-radius:2px;"><button onClick="{{ r.setA }}" style="height:24px;padding:0 10px;border:none;background:{{ r.aBg }};color:{{ r.aCol }};font-family:'IBM Plex Mono',monospace;font-size:10.5px;cursor:pointer;">{{ r.aLabel }}</button><button onClick="{{ r.setB }}" style="height:24px;padding:0 10px;border:none;background:{{ r.bBg }};color:{{ r.bCol }};font-family:'IBM Plex Mono',monospace;font-size:10.5px;cursor:pointer;">{{ r.bLabel }}</button></div></div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8FA3B8;line-height:1.5;">{{ r.fx }}</div></div></sc-for></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;"><span>{{ costLine }}</span><span>Rs = size of the black hole's edge (event horizon). Heavier or fancier parts help science but cost mass, power and money.</span></div>
+  </div>
+  </sc-if>
+</div>
+<div style="display:grid;grid-template-columns:330px minmax(0,1fr) 300px;gap:12px;">
+      <!-- left: time dilation -->
+      <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">TIME DILATION MONITORING<span style="font-size:9.5px;padding:2px 6px;border:1px solid rgba(85,221,224,.5);color:#55DDE0;border-radius:2px;">PHYSICS</span></div>
+        <div style="padding:14px;display:flex;flex-direction:column;gap:12px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div style="background:#0B1220;border:1px solid #1B283B;border-radius:3px;padding:9px 10px;display:flex;flex-direction:column;gap:3px;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8FA3B8;letter-spacing:.06em;">REFERENCE CLOCK</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:16px;">{{ refClock }}</div>
+            </div>
+            <div style="background:#0B1220;border:1px solid #1B283B;border-radius:3px;padding:9px 10px;display:flex;flex-direction:column;gap:3px;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8FA3B8;letter-spacing:.06em;">PROBE CLOCK</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:16px;color:#55DDE0;">{{ probeClock }}</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:12px;">
+            <div style="display:flex;justify-content:space-between;"><span style="color:#8FA3B8;">Schwarzschild radius Rs</span><span>{{ rsText }}</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:#8FA3B8;">Probe distance r</span><span>{{ rText }}</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:#8FA3B8;">Clock-rate dτ/dt</span><span style="color:#55DDE0;">{{ dilText }}</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:#8FA3B8;">Accumulated offset</span><span>{{ clockDiff }}</span></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;"><span>OBSERVATION DISTANCE</span><span style="color:#E8F0FA;">{{ rText }}</span></div>
+            <input type="range" min="1.05" max="20" step="0.05" value="{{ p.r }}" onChange="{{ onR }}" style="width:100%;accent-color:#55DDE0;">
+            <div style="font-size:10.5px;color:#8FA3B8;">{{ repoNote }}</div>
+          </div>
+          <canvas ref="{{ cv }}" data-kind="td" style="width:100%;height:130px;display:block;"></canvas>
+          <div style="background:#0B1220;border:1px solid #1B283B;border-radius:3px;padding:10px;display:flex;flex-direction:column;gap:4px;font-family:'IBM Plex Mono',monospace;">
+            <div style="font-size:14px;">dτ/dt = √(1 − Rs/r)</div>
+            <div style="font-size:11px;color:#8FA3B8;">{{ dilFormula }}</div>
+          </div>
+        </div>
+      </div>
+      <!-- center: black hole -->
+      <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;min-width:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">BLACK HOLE VISUALIZATION<span style="font-size:9.5px;padding:2px 6px;border:1px solid rgba(255,181,71,.5);color:#FFB547;border-radius:2px;">ILLUSTRATIVE RENDER</span></div>
+        <div style="position:relative;flex:1;min-height:500px;">
+          <canvas ref="{{ cv }}" data-kind="bh" data-mode="overview" style="position:absolute;inset:0;width:100%;height:100%;display:block;"></canvas>
+          <div style="position:absolute;left:12px;bottom:10px;display:flex;flex-direction:column;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8FA3B8;">
+            <div style="display:flex;align-items:center;gap:6px;"><div style="width:14px;border-top:1px dashed #FF5C64;"></div>Event horizon · Rs (to scale)</div>
+            <div style="display:flex;align-items:center;gap:6px;"><div style="width:14px;border-top:1px dashed #C9D4E0;"></div>Photon sphere · 1.5 Rs</div>
+            <div style="display:flex;align-items:center;gap:6px;"><div style="width:14px;border-top:1px dashed #8FA3B8;"></div>Orbital references · 3 Rs ISCO and beyond</div>
+            <div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;background:#55DDE0;transform:rotate(45deg);"></div>Probe · <span style="width:6px;height:6px;border-radius:50%;background:#55DDE0;"></span> observation nodes</div>
+          </div>
+          <div style="position:absolute;right:12px;bottom:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8FA3B8;text-align:right;line-height:1.6;">1 Rs = {{ rsText }}<br>Disk palette from illustrative T ∝ M^−¼</div>
+        </div>
+      </div>
+      <!-- right: env -->
+      <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">ENVIRONMENT<span style="font-size:9.5px;padding:2px 6px;border:1px solid rgba(255,181,71,.5);color:#FFB547;border-radius:2px;">SIMULATED</span></div>
+        <div style="padding:14px;display:flex;flex-direction:column;gap:14px;">
+          <sc-for list="{{ envBars }}" as="b" hint-placeholder-count="6">
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;"><span style="font-size:12px;color:#8FA3B8;">{{ b.label }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:{{ b.c }};">{{ b.txt }}</span></div>
+              <div style="height:4px;background:#1B283B;border-radius:1px;"><div style="height:100%;width:{{ b.w }};background:{{ b.c }};border-radius:1px;"></div></div>
+            </div>
+          </sc-for>
+          <div onClick="{{ goEnv }}" style="margin-top:4px;padding-top:12px;border-top:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#55DDE0;cursor:pointer;letter-spacing:.05em;">OPEN ENVIRONMENTAL ANALYSIS →</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1.4fr);gap:12px;">
+      <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+        <div style="padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">SWARM NETWORK</div>
+        <div style="padding:14px;display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;height:8px;border-radius:1px;overflow:hidden;background:#1B283B;">
+            <sc-for list="{{ swarmSeg }}" as="s" hint-placeholder-count="5"><div style="width:{{ s.w }};background:{{ s.c }};"></div></sc-for>
+          </div>
+          <sc-for list="{{ swarmCounts }}" as="s" hint-placeholder-count="6">
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><div style="width:7px;height:7px;border-radius:50%;background:{{ s.c }};"></div><span style="color:#8FA3B8;flex:1;">{{ s.label }}</span><span style="font-family:'IBM Plex Mono',monospace;">{{ s.v }}</span></div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+        <div style="padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">MISSION EVENT TIMELINE</div>
+        <div style="padding:10px 14px;display:flex;flex-direction:column;gap:8px;">
+          <sc-for list="{{ logShort }}" as="l" hint-placeholder-count="5">
+            <div style="display:grid;grid-template-columns:44px 1fr;gap:8px;font-size:11.5px;line-height:1.4;"><span style="font-family:'IBM Plex Mono',monospace;color:{{ l.c }};">{{ l.t }}</span><span style="color:#C9D4E0;text-wrap:pretty;">{{ l.text }}</span></div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">GRRT PREVIEW<span style="font-size:9.5px;padding:2px 6px;border:1px solid rgba(255,181,71,.5);color:#FFB547;border-radius:2px;">ILLUSTRATIVE</span></div>
+        <div style="padding:12px;display:flex;flex-direction:column;gap:8px;">
+          <canvas ref="{{ cv }}" data-kind="grrt-mini" style="width:100%;height:150px;display:block;border-radius:2px;"></canvas>
+          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8FA3B8;"><span>RAW</span><span>LENSED</span></div>
+          <div onClick="{{ goGrrt }}" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#55DDE0;cursor:pointer;">OPEN IMAGING LAB →</div>
+        </div>
+      </div>
+      <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">MISSION TELEMETRY TIMELINE</div>
+        <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px;">
+          <canvas ref="{{ cv }}" data-kind="chart" data-chart="telemetry" style="width:100%;height:150px;display:block;"></canvas>
+          <div style="display:flex;flex-wrap:wrap;gap:12px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8FA3B8;">
+            <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:2px;background:#FFB547;"></span>Fuel</span>
+            <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:2px;background:#55DDE0;"></span>Battery</span>
+            <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:2px;background:#38D996;"></span>Shield</span>
+            <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:2px;background:#B7C3D1;"></span>Chassis</span>
+            <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:2px;background:#E8F0FA;"></span>Data</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- ============ 02 SWARM NETWORK ============ -->
+<sc-if value="{{ is.swarm }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="02 Swarm Network" style="display:flex;flex-direction:column;gap:16px;">
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <div style="font-size:20px;font-weight:600;letter-spacing:.03em;">Swarm Network Simulation</div>
+      <div style="font-size:13px;color:#8FA3B8;">Face-on map of the swarm. Each drawn point samples the population; select any node or search IDs BH-0001 to BH-5000.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;">
+      <sc-for list="{{ swarmCards }}" as="s" hint-placeholder-count="6">
+        <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;padding:12px 14px;display:flex;flex-direction:column;gap:5px;">
+          <div style="display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;color:#8FA3B8;"><div style="width:7px;height:7px;border-radius:50%;background:{{ s.c }};"></div>{{ s.label }}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:22px;">{{ s.v }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:12px;">
+      <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;min-width:0;">
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid #1B283B;flex-wrap:wrap;">
+          <div style="display:flex;border:1px solid #2A3B52;border-radius:2px;">
+            <button onClick="{{ zoomOut }}" style="width:30px;height:28px;border:none;background:#0B1220;color:#E8F0FA;cursor:pointer;font-family:'IBM Plex Mono',monospace;">−</button>
+            <div style="width:56px;height:28px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8FA3B8;border-left:1px solid #2A3B52;border-right:1px solid #2A3B52;">{{ zoomText }}</div>
+            <button onClick="{{ zoomIn }}" style="width:30px;height:28px;border:none;background:#0B1220;color:#E8F0FA;cursor:pointer;font-family:'IBM Plex Mono',monospace;">+</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:0;border:1px solid #2A3B52;border-radius:2px;">
+            <input value="{{ search }}" onChange="{{ onSearch }}" onKeyDown="{{ onSearchKey }}" placeholder="Search probe ID · BH-1207" style="width:190px;height:28px;border:none;background:#0B1220;color:#E8F0FA;padding:0 10px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;outline:none;">
+            <button onClick="{{ doSearch }}" style="height:28px;padding:0 10px;border:none;border-left:1px solid #2A3B52;background:#101A2A;color:#55DDE0;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:11px;">FIND</button>
+          </div>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;">{{ searchMsg }}</span>
+          <div style="flex:1;"></div>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#4E6177;letter-spacing:.08em;">LAYERS</span>
+          <sc-for list="{{ layerChips }}" as="c" hint-placeholder-count="5">
+            <button onClick="{{ c.toggle }}" style="height:26px;padding:0 9px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};border-radius:2px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:10.5px;">{{ c.label }}</button>
+          </sc-for>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;padding:8px 12px;border-bottom:1px solid #1B283B;flex-wrap:wrap;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#4E6177;letter-spacing:.08em;margin-right:4px;">FILTER</span>
+          <sc-for list="{{ filterChips }}" as="c" hint-placeholder-count="6">
+            <button onClick="{{ c.toggle }}" style="display:flex;align-items:center;gap:6px;height:26px;padding:0 10px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};border-radius:2px;cursor:pointer;font-size:11.5px;"><span style="width:7px;height:7px;border-radius:50%;background:{{ c.dot }};"></span>{{ c.label }}</button>
+          </sc-for>
+        </div>
+        <div style="position:relative;height:640px;">
+          <canvas ref="{{ cv }}" data-kind="swarm" onClick="{{ swarmClick }}" style="position:absolute;inset:0;width:100%;height:100%;display:block;cursor:crosshair;"></canvas>
+          <div style="position:absolute;left:12px;top:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8FA3B8;line-height:1.6;">FACE-ON VIEW · radii in Rs<br>Anchor ring at max(14 Rs, 2r)</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+          <div style="padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">SELECTED NODE</div>
+          <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:14px;display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:20px;">{{ selInfo.id }}</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;padding:2px 7px;border:1px solid {{ selInfo.c }};color:{{ selInfo.c }};border-radius:2px;">{{ selInfo.cat }}</div>
+              </div>
+              <sc-for list="{{ selInfo.rows }}" as="row" hint-placeholder-count="7">
+                <div style="display:flex;justify-content:space-between;gap:10px;font-size:12px;border-bottom:1px solid #16223399;padding-bottom:7px;"><span style="color:#8FA3B8;">{{ row.k }}</span><span style="font-family:'IBM Plex Mono',monospace;text-align:right;">{{ row.v }}</span></div>
+              </sc-for>
+              <div style="font-size:11.5px;color:#8FA3B8;line-height:1.5;text-wrap:pretty;">{{ selInfo.note }}</div>
+            </div>
+          </sc-if>
+        </div>
+        <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;padding:14px;display:flex;flex-direction:column;gap:8px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">CAUSALITY CONSTRAINT</div>
+          <div style="font-size:12px;line-height:1.55;color:#C9D4E0;text-wrap:pretty;">No signal can leave the event horizon. Inside-horizon nodes are hypothetical scenario markers, drawn as hollow rings, and never receive communication links. Links are drawn only between exterior nodes and external anchors.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- ============ 03 TIME DILATION ============ -->
+<sc-if value="{{ is.td }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="03 Time Dilation" style="display:flex;flex-direction:column;gap:16px;">
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <div style="font-size:20px;font-weight:600;letter-spacing:.03em;">Time Dilation Analysis</div>
+      <div style="font-size:13px;color:#8FA3B8;">Stationary-observer clock rate outside a non-rotating (Schwarzschild) black hole.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:330px minmax(0,1fr);gap:12px;">
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+          <div style="padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">PARAMETERS</div>
+          <div style="padding:14px;display:flex;flex-direction:column;gap:16px;">
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;"><span>BLACK HOLE MASS</span><span style="color:#E8F0FA;">{{ massText }}</span></div>
+              <input type="range" min="1" max="10" step="0.01" value="{{ massLog }}" onChange="{{ onMass }}" disabled="{{ massLocked }}" style="width:100%;accent-color:#55DDE0;opacity:{{ ops.cfg }};">
+              <div style="font-size:10.5px;color:#8FA3B8;">{{ massNote }}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;"><span>PROBE DISTANCE r</span><span style="color:#E8F0FA;">{{ rText }}</span></div>
+              <input type="range" min="1.05" max="20" step="0.01" value="{{ p.r }}" onChange="{{ onR }}" style="width:100%;accent-color:#55DDE0;">
+              <div style="font-size:10.5px;color:#8FA3B8;">{{ repoNote }}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;"><span>REFERENCE ELAPSED TIME</span><span style="color:#E8F0FA;">{{ refTText }}</span></div>
+              <input type="range" min="1" max="1000" step="1" value="{{ refT }}" onChange="{{ onRefT }}" style="width:100%;accent-color:#55DDE0;">
+            </div>
+          </div>
+        </div>
+        <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+          <div style="padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">LIVE CALCULATION</div>
+          <div style="padding:14px;display:flex;flex-direction:column;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:12px;">
+            <sc-for list="{{ tdRows }}" as="row" hint-placeholder-count="7">
+              <div style="display:flex;justify-content:space-between;gap:10px;"><span style="color:#8FA3B8;">{{ row.k }}</span><span style="color:{{ row.c }};text-align:right;">{{ row.v }}</span></div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;min-width:0;">
+        <div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:12px;">
+          <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">OBSERVATION GEOMETRY<span style="font-size:9.5px;padding:2px 6px;border:1px solid rgba(255,181,71,.5);color:#FFB547;border-radius:2px;">ILLUSTRATIVE RENDER</span></div>
+            <canvas ref="{{ cv }}" data-kind="bh" data-mode="td" style="width:100%;height:320px;display:block;"></canvas>
+          </div>
+          <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+            <div style="padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">REFERENCE CLOCK COMPARISON</div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:18px;">
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:#8FA3B8;">Distant reference clock</span><span style="font-family:'IBM Plex Mono',monospace;">{{ tdRefClock }}</span></div>
+                <div style="height:10px;background:#1B283B;"><div style="height:100%;width:100%;background:#8FA3B8;"></div></div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:#8FA3B8;">Stationary probe clock</span><span style="font-family:'IBM Plex Mono',monospace;color:#55DDE0;">{{ tdProbeClock }}</span></div>
+                <div style="height:10px;background:#1B283B;"><div style="height:100%;width:{{ tdBarW }};background:#55DDE0;"></div></div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:3px;">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8FA3B8;letter-spacing:.06em;">PROBE CLOCK FALLS BEHIND BY</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:24px;color:#FFB547;">{{ tdDiff }}</div>
+              </div>
+              <div style="font-size:12px;line-height:1.55;color:#C9D4E0;text-wrap:pretty;">{{ tdExplain }}</div>
+            </div>
+          </div>
+        </div>
+        <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+          <div style="padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">TIME DILATION VS DISTANCE · dτ/dt(r)</div>
+          <canvas ref="{{ cv }}" data-kind="td" style="width:100%;height:240px;display:block;margin:8px 0;"></canvas>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;">
+          <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">FORMULA<span style="font-size:9.5px;padding:2px 6px;border:1px solid rgba(85,221,224,.5);color:#55DDE0;border-radius:2px;">ESTABLISHED PHYSICS</span></div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:18px;">dτ/dt = √(1 − Rs/r)</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:18px;">Rs = 2GM / c²</div>
+            <div style="font-size:12px;line-height:1.6;color:#8FA3B8;">G = 6.674×10⁻¹¹ m³ kg⁻¹ s⁻² · M = black hole mass · c = 2.998×10⁸ m/s · r = radial distance from the centre</div>
+          </div>
+          <div style="background:rgba(255,181,71,0.05);border:1px solid rgba(255,181,71,0.45);border-radius:4px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#FFB547;">VALIDITY WARNING</div>
+            <div style="font-size:12.5px;line-height:1.6;color:#E8F0FA;text-wrap:pretty;">A stationary observer cannot remain stationary at or inside the event horizon. This calculation is valid only for stationary observers outside a Schwarzschild black hole. It is not a complete free-fall trajectory model.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- ============ 04 ENVIRONMENT ============ -->
+<sc-if value="{{ is.env }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="04 Environmental Analysis" style="display:flex;flex-direction:column;gap:16px;">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;">
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div style="font-size:20px;font-weight:600;letter-spacing:.03em;">Environmental Simulation</div>
+        <div style="font-size:13px;color:#8FA3B8;">Modeled hazard indices for mission design. All values below are simulated assumptions, not measured black hole telemetry.</div>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;padding:4px 9px;border:1px solid rgba(255,181,71,.6);color:#FFB547;border-radius:2px;letter-spacing:.08em;flex-shrink:0;">SIMULATED ASSUMPTIONS</div>
+    </div>
+    <div style="display:grid;grid-template-columns:310px minmax(0,1fr);gap:12px;">
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+          <div style="padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">MODEL INPUTS</div>
+          <div style="padding:14px;display:flex;flex-direction:column;gap:16px;">
+            <sc-for list="{{ envSliders }}" as="s" hint-placeholder-count="5">
+              <div style="display:flex;flex-direction:column;gap:5px;">
+                <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;"><span title="{{ s.tip }}" style="cursor:help;">{{ s.label }}</span><span style="color:#E8F0FA;">{{ s.txt }}</span></div>
+                <input type="range" min="{{ s.min }}" max="{{ s.max }}" step="{{ s.step }}" value="{{ s.v }}" onChange="{{ s.on }}" style="width:100%;accent-color:#55DDE0;">
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+          <div style="padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">SAFE OBSERVATION DISTANCE</div>
+          <div style="padding:14px;display:flex;flex-direction:column;gap:8px;font-size:12px;">
+            <div style="display:flex;justify-content:space-between;"><span style="color:#8FA3B8;">Radiation within limit</span><span style="font-family:'IBM Plex Mono',monospace;">{{ safe.rad }}</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:#8FA3B8;">Tidal stress below 25</span><span style="font-family:'IBM Plex Mono',monospace;">{{ safe.stress }}</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:#8FA3B8;">Stable circular orbit</span><span style="font-family:'IBM Plex Mono',monospace;">≥ 3.00 Rs</span></div>
+            <button onClick="{{ moveSafe }}" style="margin-top:6px;height:32px;border:1px solid #55DDE0;background:transparent;color:#55DDE0;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;border-radius:2px;cursor:pointer;">{{ safe.btn }}</button>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;min-width:0;">
+        <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;">
+          <sc-for list="{{ gauges }}" as="g" hint-placeholder-count="5">
+            <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:4px;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;color:#8FA3B8;align-self:flex-start;">{{ g.label }}</div>
+              <div style="position:relative;width:120px;height:110px;">
+                <canvas ref="{{ cv }}" data-kind="gauge" data-g="{{ g.key }}" style="width:120px;height:110px;display:block;"></canvas>
+                <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:6px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:19px;color:{{ g.c }};">{{ g.v }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8FA3B8;">{{ g.unit }}</span></div>
+              </div>
+              <div style="font-size:10.5px;color:#8FA3B8;text-align:center;">{{ g.sub }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+          <div style="padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">LIVE CONSEQUENCES · PER SIMULATION STEP</div>
+          <div style="padding:10px 14px;display:flex;flex-direction:column;gap:7px;">
+            <sc-for list="{{ envWarn }}" as="w" hint-placeholder-count="3">
+              <div style="display:grid;grid-template-columns:76px 1fr;gap:10px;align-items:baseline;font-size:12px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:{{ w.c }};letter-spacing:.06em;">{{ w.sev }}</span><span style="color:#C9D4E0;">{{ w.text }}</span></div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;">
+          <sc-for list="{{ envCharts }}" as="c" hint-placeholder-count="4">
+            <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;">
+              <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;color:#8FA3B8;"><span>{{ c.title }}</span><span>{{ c.legend }}</span></div>
+              <canvas ref="{{ cv }}" data-kind="chart" data-chart="{{ c.key }}" style="width:100%;height:120px;display:block;"></canvas>
+            </div>
+          </sc-for>
+        </div>
+        <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;padding:14px 16px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;">
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">TIDAL ACCELERATION<span style="font-size:9.5px;padding:2px 6px;border:1px solid rgba(85,221,224,.5);color:#55DDE0;border-radius:2px;">ESTABLISHED PHYSICS</span></div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:15px;">Δa / L = 2GM / r³ = {{ tidalPhys }}</div>
+            <div style="font-size:11.5px;color:#8FA3B8;">Radial stretching per metre of spacecraft length at r = {{ rText }}.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">STRESS INDEX<span style="font-size:9.5px;padding:2px 6px;border:1px solid rgba(255,181,71,.5);color:#FFB547;border-radius:2px;">SIMULATED ASSUMPTION</span></div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;">S = k · 35 · (4/r)³ · (4.3×10⁶ M☉ / M)^¼</div>
+            <div style="font-size:11.5px;color:#8FA3B8;">Game-scaled index used for chassis wear. Radiation: E = 2·I·(3/r)^1.2.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- ============ 05 GRRT ============ -->
+<sc-if value="{{ is.grrt }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="05 GRRT Imaging Laboratory" style="display:flex;flex-direction:column;gap:16px;">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;">
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div style="font-size:20px;font-weight:600;letter-spacing:.03em;">GRRT Imaging Laboratory</div>
+        <div style="font-size:13px;color:#8FA3B8;">General Relativistic Ray Tracing workspace. No GRRT engine is integrated yet: the image viewer shows illustrative placeholder renders.</div>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;padding:4px 9px;border:1px solid rgba(255,181,71,.6);color:#FFB547;border-radius:2px;letter-spacing:.08em;flex-shrink:0;">ILLUSTRATIVE · NOT COMPUTED</div>
+    </div>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:12px;">
+      <div style="display:flex;flex-direction:column;gap:12px;min-width:0;">
+        <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;"><span>LEFT · ILLUSTRATIVE RAW SCENE</span><span>RIGHT · ILLUSTRATIVE GRAVITATIONAL LENSING RESULT</span></div>
+          <div style="position:relative;height:500px;">
+            <canvas ref="{{ cv }}" data-kind="grrt" style="position:absolute;inset:0;width:100%;height:100%;display:block;"></canvas>
+            <div style="position:absolute;left:12px;top:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8FA3B8;line-height:1.6;">NO LENSING · opaque sphere r = Rs</div>
+            <div style="position:absolute;right:12px;top:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8FA3B8;line-height:1.6;text-align:right;">SHADOW r ≈ 2.6 Rs · PHOTON RING · LENSED FAR DISK</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-top:1px solid #1B283B;">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;">COMPARISON</span>
+            <input type="range" min="0" max="1" step="0.005" value="{{ split }}" onChange="{{ onSplit }}" style="flex:1;accent-color:#55DDE0;">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;width:44px;text-align:right;">{{ splitText }}</span>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:12px;">
+          <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">PHOTON PATHS · EQUATORIAL PLANE<span style="font-size:9.5px;padding:2px 6px;border:1px solid rgba(85,221,224,.5);color:#55DDE0;border-radius:2px;">COMPUTED · RK4</span></div>
+            <canvas ref="{{ cv }}" data-kind="rays" style="width:100%;height:250px;display:block;"></canvas>
+            <div style="padding:8px 14px;font-size:11px;color:#8FA3B8;line-height:1.5;">Null geodesics integrated from d²u/dφ² = −u + (3/2)Rs·u². Red rays (b below the critical value) are captured; amber rays are strongly deflected.</div>
+          </div>
+          <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+            <div style="padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">VISUALIZATION RUNS</div>
+            <div style="padding:10px 14px;display:flex;flex-direction:column;gap:8px;">
+              <sc-for list="{{ runs }}" as="r" hint-placeholder-count="2">
+                <div style="display:flex;flex-direction:column;gap:2px;padding-bottom:8px;border-bottom:1px solid #1B283B;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;">{{ r.title }}</span><span style="font-size:11px;color:#8FA3B8;">{{ r.desc }}</span></div>
+              </sc-for>
+              <sc-if value="{{ noRuns }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#4E6177;">No runs yet. Adjust parameters and press RUN VISUALIZATION.</div></sc-if>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;align-self:start;">
+        <div style="padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">RENDER PARAMETERS</div>
+        <div style="padding:14px;display:flex;flex-direction:column;gap:16px;">
+          <sc-for list="{{ gSliders }}" as="s" hint-placeholder-count="6">
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;"><span title="{{ s.tip }}" style="cursor:help;">{{ s.label }}</span><span style="color:#E8F0FA;">{{ s.txt }}</span></div>
+              <input type="range" min="{{ s.min }}" max="{{ s.max }}" step="{{ s.step }}" value="{{ s.v }}" onChange="{{ s.on }}" style="width:100%;accent-color:#55DDE0;">
+            </div>
+          </sc-for>
+          <button onClick="{{ runViz }}" style="height:38px;border:1px solid #55DDE0;background:#55DDE0;color:#080D17;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.08em;border-radius:2px;cursor:pointer;opacity:{{ ops.run }};">RUN VISUALIZATION</button>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10.5px;"><span style="color:#8FA3B8;">STATUS</span><span style="color:{{ grStatusC }};">{{ grStatus }}</span></div>
+            <div style="height:4px;background:#1B283B;"><div style="height:100%;width:{{ grProg }};background:{{ grStatusC }};"></div></div>
+          </div>
+          <div style="font-size:11px;color:#8FA3B8;line-height:1.5;text-wrap:pretty;">In Rs units the image geometry is mass-independent; mass sets the physical scale ({{ gScale }}) and the illustrative disk colour.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- ============ 06 MISSION SIMULATION ============ -->
+<sc-if value="{{ is.sim }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="06 Mission Simulation" style="display:flex;flex-direction:column;gap:12px;">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;">
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div style="font-size:20px;font-weight:600;letter-spacing:.03em;">Mission Simulation Control</div>
+        <div style="font-size:13px;color:#8FA3B8;">Objective: collect 100% of the science dataset within the observation window while keeping the swarm alive.</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button onClick="{{ toggleRandom }}" style="height:28px;padding:0 10px;border:1px solid {{ randomBorder }};background:transparent;color:{{ randomColor }};font-family:'IBM Plex Mono',monospace;font-size:10.5px;border-radius:2px;cursor:pointer;opacity:{{ ops.cfg }};">{{ randomText }}</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:270px minmax(0,1fr) 300px;gap:12px;">
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+          <div style="padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">RESOURCES</div>
+          <div style="padding:12px 14px;display:flex;flex-direction:column;gap:12px;">
+            <sc-for list="{{ resList }}" as="b" hint-placeholder-count="7">
+              <div style="display:flex;flex-direction:column;gap:4px;">
+                <div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="font-size:12px;color:#8FA3B8;">{{ b.label }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:{{ b.c }};">{{ b.txt }}</span></div>
+                <div style="height:4px;background:#1B283B;"><div style="height:100%;width:{{ b.w }};background:{{ b.c }};"></div></div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#4E6177;text-align:right;">{{ b.rate }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+          <div style="padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">WHY VALUES CHANGE</div>
+          <div style="padding:12px 14px;display:flex;flex-direction:column;gap:9px;">
+            <sc-for list="{{ why }}" as="w" hint-placeholder-count="5">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;line-height:1.5;color:#C9D4E0;"><span style="color:#55DDE0;">{{ w.k }}</span> {{ w.v }}</div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;min-width:0;">
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #1B283B;">
+          <button onClick="{{ start }}" style="height:30px;padding:0 14px;border:1px solid #55DDE0;background:#55DDE0;color:#080D17;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;border-radius:2px;cursor:pointer;opacity:{{ ops.start }};">START</button>
+          <button onClick="{{ pause }}" style="height:30px;padding:0 12px;border:1px solid #2A3B52;background:#0B1220;color:#E8F0FA;font-family:'IBM Plex Mono',monospace;font-size:11px;border-radius:2px;cursor:pointer;opacity:{{ ops.pause }};">PAUSE</button>
+          <button onClick="{{ resume }}" style="height:30px;padding:0 12px;border:1px solid #2A3B52;background:#0B1220;color:#E8F0FA;font-family:'IBM Plex Mono',monospace;font-size:11px;border-radius:2px;cursor:pointer;opacity:{{ ops.resume }};">RESUME</button>
+          <button onClick="{{ stepOnce }}" style="height:30px;padding:0 12px;border:1px solid #2A3B52;background:#0B1220;color:#E8F0FA;font-family:'IBM Plex Mono',monospace;font-size:11px;border-radius:2px;cursor:pointer;opacity:{{ ops.step }};">ADVANCE ONE STEP</button>
+          <button onClick="{{ reset }}" style="height:30px;padding:0 12px;border:1px solid #2A3B52;background:#0B1220;color:#E8F0FA;font-family:'IBM Plex Mono',monospace;font-size:11px;border-radius:2px;cursor:pointer;opacity:{{ ops.reset }};">RESET</button>
+          <div style="display:flex;border:1px solid #2A3B52;border-radius:2px;">
+            <sc-for list="{{ speeds }}" as="s" hint-placeholder-count="4">
+              <button onClick="{{ s.set }}" style="height:28px;width:36px;border:none;background:{{ s.bg }};color:{{ s.color }};font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer;">{{ s.label }}</button>
+            </sc-for>
+          </div>
+          <div style="flex:1;"></div>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8FA3B8;">{{ progressText }}</span>
+        </div>
+        <div style="position:relative;flex:1;min-height:540px;">
+          <canvas ref="{{ cv }}" data-kind="bh" data-mode="sim" style="position:absolute;inset:0;width:100%;height:100%;display:block;"></canvas>
+          <div style="position:absolute;left:12px;top:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8FA3B8;line-height:1.6;">LIVE SWARM · ILLUSTRATIVE RENDER<br>Overlays to scale in Rs</div>
+          <div style="position:absolute;left:12px;bottom:10px;display:flex;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8FA3B8;">
+            <span style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#55DDE0;"></span>Active</span>
+            <span style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;background:#38D996;"></span>Anchor</span>
+            <span style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#FFB547;"></span>Damaged</span>
+            <span style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#FF5C64;"></span>Lost</span>
+            <span style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#5B6B7E;"></span>Standby</span>
+          </div>
+        </div>
+      </div>
+      <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;align-self:start;">
+        <div style="padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">MISSION CONTROLS</div>
+        <div style="padding:14px;display:flex;flex-direction:column;gap:16px;">
+          <sc-for list="{{ simSliders }}" as="s" hint-placeholder-count="4">
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;"><span title="{{ s.tip }}" style="cursor:help;">{{ s.label }}</span><span style="color:#E8F0FA;">{{ s.txt }}</span></div>
+              <input type="range" min="{{ s.min }}" max="{{ s.max }}" step="{{ s.step }}" value="{{ s.v }}" onChange="{{ s.on }}" style="width:100%;accent-color:#55DDE0;">
+              <div style="font-size:10.5px;color:#4E6177;">{{ s.note }}</div>
+            </div>
+          </sc-for>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;">DATA COLLECTION PRIORITY</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #2A3B52;border-radius:2px;">
+              <sc-for list="{{ prioOpts }}" as="o" hint-placeholder-count="3">
+                <button onClick="{{ o.set }}" style="height:28px;border:none;background:{{ o.bg }};color:{{ o.color }};font-family:'IBM Plex Mono',monospace;font-size:10.5px;cursor:pointer;">{{ o.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;">ORBIT CORRECTION</div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #2A3B52;border-radius:2px;">
+              <sc-for list="{{ orbOpts }}" as="o" hint-placeholder-count="4">
+                <button onClick="{{ o.set }}" style="height:28px;border:none;background:{{ o.bg }};color:{{ o.color }};font-family:'IBM Plex Mono',monospace;font-size:10px;cursor:pointer;">{{ o.label }}</button>
+              </sc-for>
+            </div>
+            <div style="font-size:10.5px;color:#4E6177;">{{ orbNote }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr) minmax(0,0.9fr) minmax(0,1fr);gap:12px;">
+      <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+        <div style="padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">MISSION EVENT LOG</div>
+        <div style="padding:10px 12px;display:flex;flex-direction:column;gap:7px;max-height:200px;overflow:auto;">
+          <sc-for list="{{ logLong }}" as="l" hint-placeholder-count="5">
+            <div style="display:grid;grid-template-columns:40px 1fr;gap:6px;font-size:11px;line-height:1.4;"><span style="font-family:'IBM Plex Mono',monospace;color:{{ l.c }};">{{ l.t }}</span><span style="color:#C9D4E0;">{{ l.text }}</span></div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+        <div style="padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">RESOURCE CONSUMPTION</div>
+        <div style="padding:10px 12px;display:flex;flex-direction:column;gap:6px;">
+          <canvas ref="{{ cv }}" data-kind="chart" data-chart="resources" style="width:100%;height:140px;display:block;"></canvas>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8FA3B8;"><span style="color:#FFB547;">— Fuel</span><span style="color:#55DDE0;">— Battery</span><span style="color:#38D996;">— Shield</span><span style="color:#B7C3D1;">— Chassis</span></div>
+        </div>
+      </div>
+      <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+        <div style="padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">SATELLITE STATUS</div>
+        <div style="padding:10px 12px;display:flex;flex-direction:column;gap:6px;">
+          <canvas ref="{{ cv }}" data-kind="chart" data-chart="nodes" style="width:100%;height:140px;display:block;"></canvas>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8FA3B8;"><span style="color:#55DDE0;">— Operational %</span><span style="color:#FFB547;">— Damaged %</span><span style="color:#FF5C64;">— Lost %</span></div>
+        </div>
+      </div>
+      <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+        <div style="padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">DATA COLLECTION</div>
+        <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:28px;color:#55DDE0;">{{ dataText }}</div>
+          <div style="height:6px;background:#1B283B;"><div style="height:100%;width:{{ dataW }};background:#55DDE0;"></div></div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:{{ eta.c }};line-height:1.5;">{{ eta.text }}</div>
+          <canvas ref="{{ cv }}" data-kind="chart" data-chart="data" style="width:100%;height:80px;display:block;"></canvas>
+        </div>
+      </div>
+      <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+        <div style="padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">MISSION ALERTS</div>
+        <div style="padding:10px 12px;display:flex;flex-direction:column;gap:7px;">
+          <sc-for list="{{ alerts }}" as="a" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column;gap:2px;padding:7px 9px;border:1px solid {{ a.b }};border-radius:2px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.06em;color:{{ a.c }};">{{ a.sev }}</span><span style="font-size:11.5px;color:#E8F0FA;line-height:1.4;">{{ a.text }}</span></div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- ============ 07 ANALYTICS ============ -->
+<sc-if value="{{ is.analytics }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="07 Mission Analytics" style="display:flex;flex-direction:column;gap:16px;">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;">
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div style="font-size:20px;font-weight:600;letter-spacing:.03em;">Mission Analytics</div>
+        <div style="font-size:13px;color:#8FA3B8;">Run {{ missionNo }} · {{ histLen }} recorded steps</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button onClick="{{ saveRun }}" style="height:32px;padding:0 14px;border:1px solid #38D996;background:transparent;color:#38D996;font-family:'IBM Plex Mono',monospace;font-size:11px;border-radius:2px;cursor:pointer;">SAVE &amp; COMPARE DESIGN</button>
+        <button onClick="{{ exportReport }}" style="height:32px;padding:0 14px;border:1px solid #55DDE0;background:transparent;color:#55DDE0;font-family:'IBM Plex Mono',monospace;font-size:11px;border-radius:2px;cursor:pointer;">EXPORT MISSION REPORT</button>
+        <button onClick="{{ exportCSV }}" style="height:32px;padding:0 14px;border:1px solid #2A3B52;background:#101A2A;color:#E8F0FA;font-family:'IBM Plex Mono',monospace;font-size:11px;border-radius:2px;cursor:pointer;">DOWNLOAD CSV</button>
+        <button onClick="{{ restart }}" style="height:32px;padding:0 14px;border:1px solid #2A3B52;background:#101A2A;color:#E8F0FA;font-family:'IBM Plex Mono',monospace;font-size:11px;border-radius:2px;cursor:pointer;">RESTART MISSION</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;">
+      <sc-for list="{{ perf }}" as="s" hint-placeholder-count="5">
+        <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;padding:12px 14px;display:flex;flex-direction:column;gap:5px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;color:#8FA3B8;">{{ s.label }}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:22px;color:{{ s.c }};">{{ s.v }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #1B283B;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">SAVED DESIGNS &amp; LOCAL LEADERBOARD</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#38D996;">{{ saveMsg }}</span></div>
+      <div style="display:grid;grid-template-columns:46px minmax(0,1.3fr) minmax(0,1.3fr) 100px 80px 70px 70px 100px 70px;gap:10px;padding:8px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#4E6177;letter-spacing:.06em;"><span>RANK</span><span>DESIGN</span><span>MODE</span><span>BUDGET USED</span><span>MASS</span><span>DATA</span><span>SCORE</span><span>RESULT</span><span>COMPARE</span></div>
+      <sc-for list="{{ board }}" as="b" hint-placeholder-count="2">
+        <div style="display:grid;grid-template-columns:46px minmax(0,1.3fr) minmax(0,1.3fr) 100px 80px 70px 70px 100px 70px;gap:10px;padding:8px 14px;border-bottom:1px solid #16223a;font-size:12px;align-items:center;"><span style="font-family:'IBM Plex Mono',monospace;color:#55DDE0;">{{ b.rank }}</span><span>{{ b.name }}</span><span style="color:#8FA3B8;">{{ b.mode }}</span><span style="font-family:'IBM Plex Mono',monospace;">{{ b.budget }}</span><span style="font-family:'IBM Plex Mono',monospace;">{{ b.mass }}</span><span style="font-family:'IBM Plex Mono',monospace;">{{ b.data }}</span><span style="font-family:'IBM Plex Mono',monospace;">{{ b.score }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:{{ b.c }};">{{ b.result }}</span><button onClick="{{ b.toggle }}" style="height:24px;border:1px solid {{ b.bd }};background:{{ b.bg }};color:{{ b.col }};font-family:'IBM Plex Mono',monospace;font-size:10px;border-radius:2px;cursor:pointer;">{{ b.label }}</button></div>
+      </sc-for>
+      <sc-if value="{{ noBoard }}" hint-placeholder-val="{{ false }}"><div style="padding:14px;font-size:12px;color:#4E6177;">No saved designs yet. Press SAVE &amp; COMPARE DESIGN to store this run, then pick saved runs to compare side by side.</div></sc-if>
+      <div style="display:flex;padding:14px;gap:10px;border-top:1px solid #1B283B;">
+        <div style="width:140px;display:flex;flex-direction:column;"><div style="height:28px;"></div><sc-for list="{{ cmpLabels }}" as="l" hint-placeholder-count="8"><div style="height:30px;display:flex;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8FA3B8;letter-spacing:.05em;">{{ l }}</div></sc-for></div>
+        <sc-for list="{{ cmpCols }}" as="c" hint-placeholder-count="2"><div style="flex:1;min-width:0;display:flex;flex-direction:column;background:#0B1220;border:1px solid #1B283B;border-radius:3px;padding:0 10px;"><div style="height:28px;display:flex;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:{{ c.c }};border-bottom:1px solid #1B283B;">{{ c.title }}</div><sc-for list="{{ c.cells }}" as="x" hint-placeholder-count="8"><div style="height:30px;display:flex;align-items:center;font-size:12px;color:{{ x.c }};overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">{{ x.v }}</div></sc-for></div></sc-for>
+      </div>
+    </div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">RESOURCE ANALYTICS</div>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;">
+      <sc-for list="{{ aRes }}" as="c" hint-placeholder-count="4">
+        <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;"><span>{{ c.title }}</span><span style="color:#E8F0FA;">{{ c.last }}</span></div>
+          <canvas ref="{{ cv }}" data-kind="chart" data-chart="{{ c.key }}" style="width:100%;height:110px;display:block;"></canvas>
+        </div>
+      </sc-for>
+    </div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">SCIENTIFIC ANALYTICS</div>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;">
+      <sc-for list="{{ aSci }}" as="c" hint-placeholder-count="4">
+        <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;"><span>{{ c.title }}</span><span style="color:#E8F0FA;">{{ c.last }}</span></div>
+          <canvas ref="{{ cv }}" data-kind="chart" data-chart="{{ c.key }}" style="width:100%;height:110px;display:block;"></canvas>
+        </div>
+      </sc-for>
+    </div>
+    <div style="background:#101A2A;border:1px solid #1B283B;border-radius:4px;display:flex;flex-direction:column;">
+      <div style="padding:10px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#8FA3B8;">EVENT HISTORY · DECISIONS · SYSTEM FAILURES</div>
+      <div style="display:grid;grid-template-columns:70px 110px minmax(0,1.2fr) minmax(0,1fr) minmax(0,1.3fr);gap:12px;padding:8px 14px;border-bottom:1px solid #1B283B;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#4E6177;letter-spacing:.06em;"><span>TIME</span><span>TYPE</span><span>EVENT</span><span>DECISION</span><span>RESOURCE CHANGE</span></div>
+      <sc-for list="{{ histRows }}" as="h" hint-placeholder-count="3">
+        <div style="display:grid;grid-template-columns:70px 110px minmax(0,1.2fr) minmax(0,1fr) minmax(0,1.3fr);gap:12px;padding:8px 14px;border-bottom:1px solid #16223a;font-size:12px;">
+          <span style="font-family:'IBM Plex Mono',monospace;color:#8FA3B8;">{{ h.t }}</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:{{ h.c }};">{{ h.type }}</span>
+          <span>{{ h.ev }}</span><span style="color:#C9D4E0;">{{ h.dec }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8FA3B8;">{{ h.delta }}</span>
+        </div>
+      </sc-for>
+      <sc-if value="{{ noHist }}" hint-placeholder-val="{{ false }}"><div style="padding:14px;font-size:12px;color:#4E6177;">No events or failures recorded yet.</div></sc-if>
+    </div>
+  </div>
+</sc-if>
+
+<!-- ============ OUTCOME ============ -->
+<sc-if value="{{ is.outcome }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="08 Mission Outcome" style="display:flex;justify-content:center;padding-top:20px;">
+    <sc-if value="{{ outcome.success }}" hint-placeholder-val="{{ true }}">
+      <div style="width:760px;background:#101A2A;border:1px solid rgba(56,217,150,0.5);border-top:3px solid #38D996;border-radius:4px;padding:32px 36px;display:flex;flex-direction:column;gap:22px;">
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;color:#38D996;">RUN {{ missionNo }} · T+{{ outcome.step }}h</div>
+          <div style="font-size:34px;font-weight:600;letter-spacing:.06em;color:#38D996;">MISSION ACCOMPLISHED</div>
+          <div style="font-size:13.5px;color:#C9D4E0;">{{ outcome.reason }}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+          <sc-for list="{{ outcome.stats }}" as="s" hint-placeholder-count="4">
+            <div style="background:#0B1220;border:1px solid #1B283B;border-radius:3px;padding:12px;display:flex;flex-direction:column;gap:4px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8FA3B8;letter-spacing:.06em;">{{ s.k }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:20px;">{{ s.v }}</span></div>
+          </sc-for>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:#8FA3B8;">SCIENTIFIC OBJECTIVES</div>
+            <sc-for list="{{ outcome.objectives }}" as="o" hint-placeholder-count="3">
+              <div style="display:flex;gap:8px;font-size:12.5px;"><span style="font-family:'IBM Plex Mono',monospace;color:{{ o.c }};">{{ o.mark }}</span><span>{{ o.text }}</span></div>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-start;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:#8FA3B8;">MISSION SCORE</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:40px;color:#38D996;">{{ outcome.score }}</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;">SCIENTIFIC RATING · {{ outcome.rating }}</div>
+          </div>
+        </div>
+        <div style="background:#0B1220;border:1px solid #1B283B;border-radius:3px;padding:14px 16px;display:flex;flex-direction:column;gap:9px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:#8FA3B8;">POST-MISSION ANALYSIS</div><sc-for list="{{ outcome.analysis }}" as="a" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:130px 1fr;gap:10px;font-size:12.5px;line-height:1.5;"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;color:{{ a.c }};padding-top:2px;">{{ a.k }}</span><span style="color:#E8F0FA;text-wrap:pretty;">{{ a.v }}</span></div></sc-for><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;border-top:1px solid #1B283B;padding-top:8px;">{{ outcome.breakdown }}</div></div><div style="display:flex;gap:10px;">
+          <button onClick="{{ goAnalytics }}" style="height:38px;padding:0 18px;border:1px solid #38D996;background:#38D996;color:#080D17;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600;letter-spacing:.06em;border-radius:2px;cursor:pointer;">VIEW ANALYTICS</button>
+          <button onClick="{{ nextMission }}" style="height:38px;padding:0 18px;border:1px solid #38D996;background:transparent;color:#38D996;font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.06em;border-radius:2px;cursor:pointer;">NEXT MISSION</button>
+          <button onClick="{{ mainMenu }}" style="height:38px;padding:0 18px;border:1px solid #2A3B52;background:transparent;color:#E8F0FA;font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.06em;border-radius:2px;cursor:pointer;">RETURN TO MAIN MENU</button>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ outcome.failure }}" hint-placeholder-val="{{ false }}">
+      <div style="width:760px;background:#101A2A;border:1px solid rgba(255,92,100,0.5);border-top:3px solid #FF5C64;border-radius:4px;padding:32px 36px;display:flex;flex-direction:column;gap:22px;">
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;color:#FF5C64;">RUN {{ missionNo }} · T+{{ outcome.step }}h</div>
+          <div style="font-size:34px;font-weight:600;letter-spacing:.06em;color:#FF5C64;">MISSION FAILED</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:#8FA3B8;margin-top:6px;">FAILURE REASON</div>
+          <div style="font-size:14px;color:#E8F0FA;">{{ outcome.reason }}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+          <sc-for list="{{ outcome.stats }}" as="s" hint-placeholder-count="4">
+            <div style="background:#0B1220;border:1px solid #1B283B;border-radius:3px;padding:12px;display:flex;flex-direction:column;gap:4px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8FA3B8;letter-spacing:.06em;">{{ s.k }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:20px;">{{ s.v }}</span></div>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:#8FA3B8;">CRITICAL EVENT HISTORY</div>
+          <sc-for list="{{ outcome.critical }}" as="c" hint-placeholder-count="3">
+            <div style="display:grid;grid-template-columns:56px 1fr;gap:10px;font-size:12px;"><span style="font-family:'IBM Plex Mono',monospace;color:#FF5C64;">{{ c.t }}</span><span style="color:#C9D4E0;">{{ c.text }}</span></div>
+          </sc-for>
+        </div>
+        <div style="background:#0B1220;border:1px solid #1B283B;border-radius:3px;padding:14px 16px;display:flex;flex-direction:column;gap:9px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:#8FA3B8;">POST-MISSION ANALYSIS</div><sc-for list="{{ outcome.analysis }}" as="a" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:130px 1fr;gap:10px;font-size:12.5px;line-height:1.5;"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;color:{{ a.c }};padding-top:2px;">{{ a.k }}</span><span style="color:#E8F0FA;text-wrap:pretty;">{{ a.v }}</span></div></sc-for><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;border-top:1px solid #1B283B;padding-top:8px;">{{ outcome.breakdown }}</div></div><div style="display:flex;gap:10px;">
+          <button onClick="{{ goAnalytics }}" style="height:38px;padding:0 18px;border:1px solid #FF5C64;background:#FF5C64;color:#080D17;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600;letter-spacing:.06em;border-radius:2px;cursor:pointer;">REVIEW FAILURE</button>
+          <button onClick="{{ restart }}" style="height:38px;padding:0 18px;border:1px solid #FF5C64;background:transparent;color:#FF5C64;font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.06em;border-radius:2px;cursor:pointer;">RESTART SIMULATION</button>
+          <button onClick="{{ mainMenu }}" style="height:38px;padding:0 18px;border:1px solid #2A3B52;background:transparent;color:#E8F0FA;font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.06em;border-radius:2px;cursor:pointer;">RETURN TO MAIN MENU</button>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+</sc-if>
+
+</div>
+</div>
+
+<div style="grid-column:1 / span 2;display:flex;align-items:center;gap:16px;padding:0 16px;border-top:1px solid #1B283B;background:#0B1220;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;">
+  <span style="display:flex;align-items:center;gap:6px;"><span style="width:6px;height:6px;border-radius:50%;background:{{ statusColor }};"></span>{{ statusText }}</span>
+  <span>{{ footText }}</span>
+  <div style="flex:1;"></div>
+  <button onClick="{{ openSources }}" style="height:22px;padding:0 10px;border:1px solid #2A3B52;background:transparent;color:#55DDE0;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.05em;border-radius:2px;cursor:pointer;">NASA DATA SOURCES</button>
+</div>
+
+<div style="position:fixed;right:16px;bottom:44px;display:flex;flex-direction:column;gap:8px;z-index:90;width:360px;">
+  <sc-for list="{{ toasts }}" as="t" hint-placeholder-count="0">
+    <div style="background:#0B1220;border:1px solid #2F4A63;border-top:2px solid #55DDE0;border-radius:3px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;box-shadow:0 6px 20px rgba(0,0,0,0.45);">
+      <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#55DDE0;">WHY THIS MATTERS</span><span onClick="{{ t.close }}" style="cursor:pointer;color:#8FA3B8;font-size:14px;line-height:1;">×</span></div>
+      <div style="font-size:12px;line-height:1.5;color:#E8F0FA;text-wrap:pretty;">{{ t.text }}</div>
+    </div>
+  </sc-for>
+</div>
+
+<sc-if value="{{ guideOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;inset:0;background:rgba(4,7,13,0.72);display:flex;align-items:center;justify-content:center;z-index:70;"><div style="width:720px;max-width:94vw;max-height:92vh;overflow:auto;background:#101A2A;border:1px solid #2A3B52;border-top:3px solid #55DDE0;border-radius:4px;padding:24px 26px;display:flex;flex-direction:column;gap:16px;"><div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;color:#8FA3B8;">HOW TO PLAY · STEP {{ gstepN }} OF 3</span><span onClick="{{ closeGuide }}" style="cursor:pointer;color:#8FA3B8;font-size:18px;">×</span></div>
+<div style="font-size:24px;font-weight:600;">{{ gTitle }}</div>
+<sc-if value="{{ g1 }}" hint-placeholder-val="{{ true }}"><div style="height:130px;background:#0B1220;border:1px solid #1B283B;border-radius:3px;display:flex;align-items:center;justify-content:center;gap:12px;padding:12px;"><div style="flex:1;border:1px solid #2A3B52;border-radius:3px;padding:10px;display:flex;flex-direction:column;gap:6px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#55DDE0;">SCENARIO</span><span style="height:4px;background:#1B283B;"></span><span style="font-size:11px;color:#8FA3B8;">Pick a goal</span></div><div style="flex:1;border:1px solid #2A3B52;border-radius:3px;padding:10px;display:flex;flex-direction:column;gap:6px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#55DDE0;">ROCKET</span><span style="height:4px;background:#1B283B;"></span><span style="font-size:11px;color:#8FA3B8;">Weight limit</span></div><div style="flex:1;border:1px solid #2A3B52;border-radius:3px;padding:10px;display:flex;flex-direction:column;gap:6px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#55DDE0;">PARTS</span><span style="height:4px;background:#1B283B;"></span><span style="font-size:11px;color:#8FA3B8;">Trade-offs</span></div></div></sc-if>
+<sc-if value="{{ g2 }}" hint-placeholder-val="{{ false }}"><div style="height:130px;background:#0B1220;border:1px solid #1B283B;border-radius:3px;display:flex;align-items:center;justify-content:center;gap:12px;padding:12px;"><div style="width:70px;height:70px;border-radius:50%;background:#000;border:3px solid #FFB547;"></div><div style="display:flex;flex-direction:column;gap:7px;"><div style="display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8FA3B8;"><span style="width:50px;">FUEL</span><span style="width:110px;height:5px;background:#1B283B;"><span style="display:block;height:100%;width:70%;background:#FFB547;"></span></span></div><div style="display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8FA3B8;"><span style="width:50px;">POWER</span><span style="width:110px;height:5px;background:#1B283B;"><span style="display:block;height:100%;width:85%;background:#55DDE0;"></span></span></div><div style="display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8FA3B8;"><span style="width:50px;">DATA</span><span style="width:110px;height:5px;background:#1B283B;"><span style="display:block;height:100%;width:35%;background:#E8F0FA;"></span></span></div><div style="display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8FA3B8;"><span style="width:50px;">SIGNAL</span><span style="width:110px;height:5px;background:#1B283B;"><span style="display:block;height:100%;width:60%;background:#38D996;"></span></span></div></div></div></sc-if>
+<sc-if value="{{ g3 }}" hint-placeholder-val="{{ false }}"><div style="height:130px;background:#0B1220;border:1px solid #1B283B;border-radius:3px;display:flex;align-items:center;justify-content:center;gap:12px;padding:12px;"><div style="width:210px;border:1px solid #FFB547;border-radius:3px;padding:10px;display:flex;flex-direction:column;gap:5px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#FFB547;">EVENT · CHOOSE ONE</span><span style="height:14px;border:1px solid #2A3B52;"></span><span style="height:14px;border:1px solid #2A3B52;"></span><span style="height:14px;border:1px solid #2A3B52;"></span></div><div style="width:190px;border:1px solid #2F4A63;border-top:2px solid #55DDE0;padding:10px;display:flex;flex-direction:column;gap:5px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#55DDE0;">WHY THIS MATTERS</span><span style="font-size:11px;color:#8FA3B8;">Moving away cut radiation but used fuel.</span></div></div></sc-if>
+<div style="font-size:14px;line-height:1.6;color:#C9D4E0;text-wrap:pretty;">{{ gText }}</div>
+<div style="display:flex;justify-content:space-between;align-items:center;"><div style="display:flex;gap:6px;"><sc-for list="{{ gDots }}" as="d" hint-placeholder-count="3"><span style="width:8px;height:8px;border-radius:50%;background:{{ d.c }};"></span></sc-for></div><div style="display:flex;gap:8px;"><button onClick="{{ guideBack }}" style="height:34px;padding:0 16px;border:1px solid #2A3B52;background:transparent;color:#E8F0FA;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:400;letter-spacing:.05em;border-radius:2px;cursor:pointer;">BACK</button><button onClick="{{ guideNext }}" style="height:34px;padding:0 16px;border:1px solid #55DDE0;background:#55DDE0;color:#080D17;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.05em;border-radius:2px;cursor:pointer;">{{ gNext }}</button></div></div></div></div>
+</sc-if>
+
+<sc-if value="{{ sourcesOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;inset:0;background:rgba(4,7,13,0.72);display:flex;align-items:center;justify-content:center;z-index:70;"><div style="width:560px;max-width:94vw;max-height:92vh;overflow:auto;background:#101A2A;border:1px solid #2A3B52;border-top:3px solid #55DDE0;border-radius:4px;padding:24px 26px;display:flex;flex-direction:column;gap:16px;"><div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;color:#8FA3B8;">NASA DATA SOURCES</span><span onClick="{{ closeSources }}" style="cursor:pointer;color:#8FA3B8;font-size:18px;">×</span></div>
+<sc-for list="{{ sources }}" as="s" hint-placeholder-count="6"><div style="display:flex;flex-direction:column;gap:2px;padding-bottom:10px;border-bottom:1px solid #1B283B;"><span style="font-size:11.5px;color:#8FA3B8;">{{ s.label }}</span><a href="{{ s.url }}" target="_blank" rel="noopener" style="font-family:'IBM Plex Mono',monospace;font-size:12px;">{{ s.url }}</a></div></sc-for>
+<div style="font-size:11.5px;color:#8FA3B8;">Educational simulation. Values are modeled, not NASA telemetry.</div></div></div>
+</sc-if>
+
+<sc-if value="{{ voteOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;inset:0;background:rgba(4,7,13,0.72);display:flex;align-items:center;justify-content:center;z-index:60;"><div style="width:680px;max-width:94vw;max-height:92vh;overflow:auto;background:#101A2A;border:1px solid #2A3B52;border-top:3px solid #55DDE0;border-radius:4px;padding:24px 26px;display:flex;flex-direction:column;gap:16px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;color:#8FA3B8;">TEAM CONSENSUS · PRIORITY VOTE</div>
+<div style="font-size:13px;color:#C9D4E0;line-height:1.5;">Each crew member backs one priority. When priorities compete, the final score rewards the ones the team agreed on.</div>
+<sc-for list="{{ voteRows }}" as="r" hint-placeholder-count="2"><div style="display:flex;flex-direction:column;gap:6px;"><span style="font-size:12.5px;font-weight:600;">{{ r.role }}</span><div style="display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #2A3B52;border-radius:2px;"><sc-for list="{{ r.opts }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.set }}" style="height:30px;border:none;background:{{ o.bg }};color:{{ o.color }};font-size:11px;cursor:pointer;">{{ o.label }}</button></sc-for></div></div></sc-for>
+<div style="background:#0B1220;border:1px solid #1B283B;border-radius:3px;padding:12px;display:flex;flex-direction:column;gap:7px;"><sc-for list="{{ tally }}" as="t" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:190px 1fr 20px;gap:10px;align-items:center;font-size:11.5px;"><span style="color:#8FA3B8;">{{ t.label }}</span><span style="height:5px;background:#1B283B;"><span style="display:block;height:100%;width:{{ t.w }};background:#55DDE0;"></span></span><span style="font-family:'IBM Plex Mono',monospace;">{{ t.n }}</span></div></sc-for><div style="font-size:12px;line-height:1.5;color:#FFB547;">{{ voteEffect }}</div></div>
+<div style="display:flex;justify-content:flex-end;gap:8px;"><button onClick="{{ closeVote }}" style="height:34px;padding:0 16px;border:1px solid #2A3B52;background:transparent;color:#E8F0FA;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:400;letter-spacing:.05em;border-radius:2px;cursor:pointer;">CLOSE</button><button onClick="{{ confirmVote }}" style="height:34px;padding:0 16px;border:1px solid #55DDE0;background:#55DDE0;color:#080D17;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.05em;border-radius:2px;cursor:pointer;">{{ voteBtn }}</button></div></div></div>
+</sc-if>
+
+<!-- DECISION MODAL -->
+<sc-if value="{{ hasEvent }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;background:rgba(4,7,13,0.72);display:flex;align-items:center;justify-content:center;z-index:50;">
+    <div style="width:600px;background:#101A2A;border:1px solid {{ ev.c }};border-top:3px solid {{ ev.c }};border-radius:4px;padding:24px 26px;display:flex;flex-direction:column;gap:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;color:#8FA3B8;">{{ ev.code }} · T+{{ ev.step }}h · SIMULATION HELD</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;padding:3px 8px;border:1px solid {{ ev.c }};color:{{ ev.c }};border-radius:2px;letter-spacing:.08em;">{{ ev.severity }}</div>
+      </div>
+      <div style="font-size:24px;font-weight:600;letter-spacing:.05em;">{{ ev.title }}</div>
+      <div style="display:grid;grid-template-columns:120px 1fr;gap:8px 14px;font-size:12.5px;">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;padding-top:2px;">CAUSE</span><span>{{ ev.cause }}</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;padding-top:2px;">AFFECTED</span><span>{{ ev.affected }}</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;padding-top:2px;">IN PLAIN WORDS</span><span>{{ ev.plain }}</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;padding-top:2px;">CREW</span><span style="color:#55DDE0;">{{ ev.crewNote }}</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8FA3B8;padding-top:2px;">STATUS</span><span style="color:{{ ev.c }};">AWAITING MISSION DIRECTOR DECISION</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <sc-for list="{{ ev.choices }}" as="ch" hint-placeholder-count="3">
+          <button onClick="{{ ch.pick }}" style="display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:left;padding:12px 14px;border:1px solid #2A3B52;background:#0B1220;color:#E8F0FA;border-radius:3px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;font-size:13px;" style-hover="border-color:#55DDE0;">
+            <span style="display:flex;flex-direction:column;gap:3px;"><span>{{ ch.label }}</span><span style="font-size:11px;color:#8FA3B8;">{{ ch.why }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#55DDE0;">{{ ch.advice }}</span></span><span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#FFB547;text-align:right;flex-shrink:0;">{{ ch.fx }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const NT=5000,NA=160;
+const ORB={Off:0,Minimal:0.12,Standard:0.25,Aggressive:0.45};
+const ORBL=['Off','Minimal','Standard','Aggressive'];
+const PRIO={Low:0.7,Balanced:1,High:1.35};
+const PPWR={Low:-0.05,Balanced:0,High:0.12};
+const CC={cyan:'#55DDE0',green:'#38D996',amber:'#FFB547',red:'#FF5C64',text:'#E8F0FA',muted:'#8FA3B8'};
+const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+const GG=6.674e-11,MSUN=1.989e30,CL=2.998e8;
+const pad4=n=>String(n).padStart(4,'0');
+const SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+const sup=n=>String(n).split('').map(c=>c==='-'?'⁻':SUP[+c]).join('');
+const fmtE=x=>{if(!isFinite(x)||x===0)return'0';const e=Math.floor(Math.log10(Math.abs(x)));if(e>=-2&&e<5)return x.toLocaleString('en-US',{maximumFractionDigits:2});return (x/Math.pow(10,e)).toFixed(2)+'×10'+sup(e);};
+const hms=h=>{const s=Math.round(h*3600);return String(Math.floor(s/3600)).padStart(3,'0')+':'+String(Math.floor(s%3600/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');};
+const sgn=(x,d)=>(x>=0?'+':'−')+Math.abs(x).toFixed(d==null?2:d);
+const lvl=(v,good)=>v>50?CC.green:v>25?CC.amber:CC.red;
+
+const DIFF={CADET:{label:'CADET',tip:'Easy: gentle wear, bigger budget, a little extra data.',wear:0.7,data:1.15,budget:340,score:0.8},COMMANDER:{label:'COMMANDER',tip:'Medium: balanced wear and budget.',wear:1,data:1,budget:260,score:1},ASTROPHYSICIST:{label:'ASTROPHYSICIST',tip:'Hard: faster wear, tight budget, less data per hour.',wear:1.4,data:0.9,budget:200,score:1.3}};
+const SCEN={photon:{title:'Event Horizon Photon Mapping',desc:'Photograph light bending around the black hole.',goal:'Get within 5 Rs and collect 100% data.',maxR:5},tidal:{title:'Tidal Shear Stress Test',desc:'Find out how much stretching your probe survives.',goal:'Get within 4 Rs, finish with body health 25%+.',maxR:4},clock:{title:'Relativistic Clock Sync',desc:'Compare a probe clock with Earth time.',goal:'Get within 6 Rs, finish with signal 30%+.',maxR:6}};
+const ORBITS={low:{label:'Low',r:9,cost:0,tip:'Far and safe. Slow data, little wear. Rs is the black hole edge size.'},ell:{label:'Elliptical',r:4.5,cost:8,tip:'A middle path: good data, moderate danger.'},close:{label:'Close-Approach',r:3.4,cost:15,tip:'Very close. Lots of data, but strong radiation and stretching.'}};
+const VEH={s:{name:'Light Lift',lim:500,cost:35},m:{name:'Medium Lift',lim:700,cost:60},h:{name:'Heavy Lift',lim:1200,cost:110}};
+const PARTS={shield:{label:'Radiation shielding',tip:'Heavy shielding protects better but weighs more and uses more power.',a:{n:'Basic',mass:60,cost:0,pw:0},b:{n:'Heavy',mass:210,cost:18,pw:0.04}},antenna:{label:'Antenna',tip:'A high-gain antenna keeps the signal to Earth stronger.',a:{n:'Standard',mass:30,cost:0,pw:0},b:{n:'High-gain',mass:70,cost:12,pw:0.05}},sensor:{label:'Science sensors',tip:'Quantum sensors collect more data per hour.',a:{n:'Optical',mass:35,cost:0,pw:0},b:{n:'Quantum',mass:60,cost:25,pw:0.08}}};
+const BEN={shield:'Protection +20 and radiation wear −30%',antenna:'Signal +12 points',sensor:'Science data ×1.35'};
+const PK=['shield','antenna','sensor'];
+const BUS_MASS=295,PROBE_COST=60,OPS_COST=0.35;
+const ROLES={planner:{name:'Mission Planner',short:'Planner'},engineer:{name:'Spacecraft Engineer',short:'Engineer'},science:{name:'Science Lead',short:'Science'},comms:{name:'Comms Officer',short:'Comms'}};
+const PRIS={data:'Max science data',safety:'Protect probe',budget:'Save money',comms:'Strong signal'};
+const massOf=c=>BUS_MASS+PK.reduce((a,k)=>a+PARTS[k][c.parts[k]].mass,0);
+const setupCost=c=>PROBE_COST+VEH[c.veh].cost+ORBITS[c.orbit].cost+PK.reduce((a,k)=>a+PARTS[k][c.parts[k]].cost,0);
+const partPw=c=>PK.reduce((a,k)=>a+PARTS[k][c.parts[k]].pw,0);
+const EVX={E01:{plain:'Harmful radiation is stronger than your shielding can block, so electronics start to break.',by:[['engineer'],['planner','comms'],['science']],why:['More protection keeps the shield healthier but drains the battery a bit faster.','Farther away means weaker radiation, but moving costs fuel and slows data.','You gain a little data now, but the shield takes damage.']},
+E02:{plain:'The tank is almost empty. Without fuel the swarm cannot hold its position.',by:[['planner','engineer'],['comms'],['science']],why:['Fewer corrections save fuel, but nodes may drift out of place.','A shorter window ends the mission sooner, so there is less time to collect data.','Dropping damaged nodes frees fuel, but you lose their data.']},
+E03:{plain:'Gravity pulls harder on the near side of the probe than the far side, stretching its body.',by:[['engineer','comms'],['planner'],['science']],why:['Moving out weakens the stretching, but gives less data and burns fuel.','A shorter window means less time under stress.','Sacrificing nodes lowers strain on the main body but shrinks the swarm.']},
+E04:{plain:'The radio signal home is getting weak, so collected data cannot be sent back.',by:[['comms','engineer'],['planner'],['science']],why:['Moving anchors improves the signal for good, but uses fuel.','Sending data slower makes the link more reliable but collects less.','Sending only the key data keeps the link usable, with a small cut in total data.']}};
+const TIPS={'OBSERVATION DISTANCE':'How close the probe sits to the black hole. Closer gives more data but more danger.','RADIATION PROTECTION LEVEL':'How much radiation your shielding blocks. Higher uses more battery.','POWER ALLOCATION · INSTRUMENTS / COMMS':'Split battery power between science instruments and the radio link.','OBSERVATION DURATION':'How many hours you have to finish collecting data.','RADIATION INTENSITY I':'How strong the simulated radiation is.','TEMPERATURE PARAMETER':'How hot the simulated environment is.','TIDAL STRESS MULTIPLIER k':'Scales how hard gravity stretches the probe.','SHIELDING LEVEL':'How much radiation your shielding blocks.','BLACK HOLE MASS':'Heavier black holes are bigger and glow in a different colour.','CAMERA ANGLE':'Rotates the picture.','OBSERVER DISTANCE':'How far the camera is from the black hole.','INCLINATION':'Viewing angle. 0° looks from above, 89° looks edge-on.','RAY TRACING RESOLUTION':'Higher is sharper but slower.','VISUALIZATION RAYS':'How many light paths to draw.'};
+const tipify=a=>a.map(s=>({...s,tip:TIPS[s.label]||''}));
+const INFO={overview:'https://science.nasa.gov/universe/black-holes/',swarm:'https://www.nasa.gov/smallsat-institute/',td:'https://science.nasa.gov/mission/gravity-probe-b/',env:'https://www.nasa.gov/hrp/',grrt:'https://svs.gsfc.nasa.gov/',sim:'https://www.nasa.gov/stem/'};
+const SRC=[['Mission Overview · black holes',INFO.overview],['Swarm Network · small satellites',INFO.swarm],['Time Dilation · relativity tests',INFO.td],['Environmental Simulation · radiation and health',INFO.env],['GRRT Imaging · visualizations',INFO.grrt],['Mission Simulation · education',INFO.sim]];
+const GUIDE=[['1. Design your mission','Open Mission Overview and pick a goal, a rocket and your probe parts. Better parts help your science but add weight, power use and cost. The rocket can only lift so much, and your budget is limited.'],['2. Launch and watch','Press START at the top. Each step is one hour of mission time. Watch fuel, battery, data and the signal back to Earth. Flying closer to the black hole gives more data but more danger.'],['3. Decide and learn','When something goes wrong the game pauses and asks you to choose. A short Why This Matters note explains what your choice did. Collect 100% of the data to win. Run out of power, health or signal and the mission fails.']];
+function fresh(no){return{status:'READY',step:0,mission:no,
+ p:{mass:4.3e6,r:6,shieldLvl:60,radI:40+no*10,temp:50,tidalMult:1,split:60,prio:'Balanced',orb:'Standard',duration:120,markers:24,random:false},
+ res:{fuel:100,battery:100,shield:100,chassis:100,data:0,comm:80},
+ nodes:{damaged:0,lost:0,inactive:0},mods:{anchor:0,tx:1,critical:false},
+ probeT:0,history:[],log:[{step:0,type:'info',text:'Mission BH-5000 · run '+no+' initialised. 5,000 nodes on approach.'}],
+ events:[],active:null,fired:{},outcome:null,spike:0,seed:20261105+no,wasRunning:false,milestone:0,spent:0,consensus:0,voteDone:false};}
+
+function phys(st){const{p,res,nodes,mods}=st;const r=p.r;const dil=Math.sqrt(Math.max(0,1-1/r));const c=st.cfg,D=DIFF[c.diff],heavy=c.parts.shield==='b',hg=c.parts.antenna==='b',qs=c.parts.sensor==='b',lim=p.shieldLvl+(heavy?20:0),mass=massOf(c),mf=1+(mass-420)/1000;
+ const RsM=2*GG*p.mass*MSUN/(CL*CL);const rad=p.radI*2*Math.pow(3/r,1.2)*(st.spike>0?1.8:1);
+ const tempK=150+p.temp*5*Math.pow(6/r,0.75);const stress=p.tidalMult*35*Math.pow(4/r,3)*Math.pow(4.3e6/p.mass,0.25);
+ const tidal=2*GG*p.mass*MSUN/Math.pow(r*RsM,3);
+ const ext=NT-NA-p.markers;const op=Math.max(0,ext-nodes.damaged-nodes.lost-nodes.inactive);const opFrac=op/ext;
+ const orb=res.fuel<=0?'Off':p.orb;const keep=r<3?0.5*(3.2-r):0;const fuelR=c.sandbox?0:-(ORB[orb]+(orb==='Off'?0:keep))*D.wear*mf;
+ const dInst=p.split*0.0035,dComm=(100-p.split)*0.0025*mods.tx,dSh=p.shieldLvl*0.0015,dPr=PPWR[p.prio],dTh=tempK>450?0.1:0;
+ const dParts=partPw(c);const drain=0.12+dInst+dComm+dSh+dPr+dTh+dParts;const batR=0.28-drain;
+ const excess=Math.max(0,rad-lim);const thX=Math.max(0,tempK-450)*0.002;
+ const shR=-(0.03+rad*0.002*(heavy?0.7:1)+excess*0.04+thX)*D.wear;
+ const chR=-(0.02+Math.max(0,stress-25)*0.03)*D.wear;
+ const commT=cl(40+(100-p.split)*0.6+mods.anchor+(hg?12:0)-(1-dil)*40-(orb==='Off'?10:0)+(mods.tx<1?15:0),0,100);
+ const commF=Math.max(mods.critical?0.8:0.3,Math.min(1.15,res.comm/60));
+ const prox=Math.pow(6/r,0.5);
+ const dataR=res.battery>2?1.25*D.data*(qs?1.35:1)*(c.scen==='tidal'?1+Math.min(0.5,stress/100):c.scen==='clock'?1+(1-dil)*2:1)*(p.split/60)*PRIO[p.prio]*prox*opFrac*commF*(mods.critical?0.9:1)*(mods.tx<1?0.85:1):0;
+ const dmgR=Math.max(0,50-res.shield)*0.8+excess*0.5;
+ const drift=r<3&&orb==='Off'?40*(3.2-r):(orb==='Off'?2:0);
+ const lostR=Math.max(0,50-res.chassis)*0.6+nodes.damaged*0.02+drift;
+ const budgetLeft=c.sandbox?Infinity:D.budget-setupCost(c)-st.spent;return{budgetLeft,lim,mass,mf,dParts,D,heavy,hg,qs,r,dil,RsM,RsKm:RsM/1000,rad,tempK,stress,tidal,ext,op,opFrac,orb,keep,fuelR,batR,drain,dInst,dComm,dSh,dPr,dTh,excess,thX,shR,chR,commT,commF,prox,dataR,dmgR,lostR,drift};}
+
+function snap(st){const P=phys(st);return{t:st.step,fuel:st.res.fuel,battery:st.res.battery,shield:st.res.shield,chassis:st.res.chassis,data:st.res.data,comm:st.res.comm,op:P.op/P.ext*100,dmg:st.nodes.damaged/P.ext*100,lost:st.nodes.lost/P.ext*100,r:st.p.r,dil:P.dil,rad:P.rad,stress:P.stress,temp:P.tempK,lvl:P.lim,budget:isFinite(P.budgetLeft)?P.budgetLeft:0,mass:P.mass};}
+
+const EV={
+ E01:{title:'RADIATION SPIKE',affected:'Radiation shield · node electronics · battery',test:(s,P)=>P.rad>P.lim,sev:(s,P)=>P.excess>20?'CRITICAL':'WARNING',cause:(s,P)=>'Radiation hitting the probe ('+P.rad.toFixed(0)+') is stronger than your shielding can handle ('+P.lim+').',
+  choices:[{label:'Increase protection',fx:'Protection +20 · battery −5%',apply:s=>{s.p.shieldLvl=Math.min(100,s.p.shieldLvl+20);s.res.battery-=5;}},
+   {label:'Move to a safer observation distance',fx:'r +2.0 Rs · fuel −6%',apply:s=>{s.p.r=Math.min(20,s.p.r+2);s.res.fuel-=6;}},
+   {label:'Continue observation with increased risk',fx:'Shield −8% · data +2%',apply:s=>{s.res.shield-=8;s.res.data+=2;}}]},
+ E02:{title:'FUEL DEPLETION',affected:'Propulsion · orbit correction · station-keeping',test:(s)=>s.res.fuel<25,sev:(s)=>s.res.fuel<10?'CRITICAL':'WARNING',cause:(s,P)=>'Fuel is down to '+s.res.fuel.toFixed(0)+'%. Moves and orbit corrections burn about '+Math.abs(P.fuelR).toFixed(2)+'% every hour.',
+  choices:[{label:'Reduce orbit correction frequency',fx:'Orbit correction −1 level',apply:s=>{s.p.orb=ORBL[Math.max(0,ORBL.indexOf(s.p.orb)-1)];}},
+   {label:'Reduce observation duration',fx:'Window −25%',apply:s=>{s.p.duration=Math.max(s.step+12,Math.round(s.p.duration*0.75));}},
+   {label:'Abandon damaged nodes',fx:'Damaged → lost · fuel +8%',apply:s=>{s.nodes.lost+=s.nodes.damaged;s.nodes.damaged=0;s.res.fuel+=8;}}]},
+ E03:{title:'TIDAL STRESS WARNING',affected:'Chassis · structural joints · deployables',test:(s,P)=>P.stress>45||s.res.chassis<60,sev:(s,P)=>P.stress>60||s.res.chassis<40?'CRITICAL':'WARNING',cause:(s,P)=>'The stretching force ('+P.stress.toFixed(0)+') is above what the probe body can take (25). Body health: '+s.res.chassis.toFixed(0)+'%.',
+  choices:[{label:'Increase observation distance',fx:'r +1.5 Rs · fuel −5%',apply:s=>{s.p.r=Math.min(20,s.p.r+1.5);s.res.fuel-=5;}},
+   {label:'Reduce mission exposure duration',fx:'Window −20%',apply:s=>{s.p.duration=Math.max(s.step+12,Math.round(s.p.duration*0.8));}},
+   {label:'Sacrifice affected nodes',fx:'−6% operational nodes · chassis +10%',apply:(s,P)=>{s.nodes.lost+=P.op*0.06;s.res.chassis+=10;}}]},
+ E04:{title:'COMMUNICATION DEGRADATION',affected:'External anchors · downlink · data return',test:(s)=>s.res.comm<50,sev:(s)=>s.res.comm<35?'CRITICAL':'WARNING',cause:(s,P)=>'The signal home is weak ('+s.res.comm.toFixed(0)+'%). Gravity near the black hole stretches radio waves (redshift), making them harder to read.',
+  choices:[{label:'Reposition external anchors',fx:'Comm baseline +15 · fuel −7%',apply:s=>{s.mods.anchor+=15;s.res.fuel-=7;}},
+   {label:'Reduce data transmission rate',fx:'Comm +15 · data rate ×0.85',apply:s=>{s.mods.tx=0.7;}},
+   {label:'Prioritize critical scientific data',fx:'Comm factor floor 0.8 · data ×0.9',apply:s=>{s.mods.critical=true;}}]}};
+
+function judge(s,P){const opPct=P.op/P.ext*100;
+ if(!s.cfg.sandbox&&P.budgetLeft<0)return'Budget exhausted — the mission ran out of money before the data came home.';
+ if(s.res.comm<15)return'Comms signal dropped below 15% due to extreme gravitational redshift and a weak link to the anchors.';
+ if(s.res.battery<=0)return'Battery depleted — the swarm power bus collapsed.';
+ if(s.res.chassis<=0)return'Structural failure — modeled tidal stress exceeded chassis tolerance.';
+ if(s.res.shield<=0)return'Shield failure — radiation exposure exceeded protection capacity.';
+ if(opPct<40)return'Swarm attrition — only '+opPct.toFixed(0)+'% of exterior nodes remain operational.';
+ if(s.res.fuel<=0&&s.p.r<3)return'Propellant exhausted inside 3 Rs — station-keeping impossible without stable orbits.';
+ return null;}
+
+class Component extends DCLogic {
+  state=(()=>{const s={...fresh(1),speed:1,screen:'overview',zoom:1,filters:{active:true,anchor:true,damaged:true,lost:true,inactive:true,marker:true},layers:{disk:true,orbits:true,links:true,traj:true,grid:true},sel:1207,search:'',searchMsg:'',split:0.5,g:{mass:6.63,cam:0,dist:40,inc:76,res:3,rays:24},gr:{status:'IDLE',runs:[]},refT:24,grTick:0,cfg:{diff:'COMMANDER',sandbox:false,team:false,crew:{planner:true,engineer:true,science:true,comms:true},scen:'photon',orbit:'ell',veh:'m',parts:{shield:'a',antenna:'a',sensor:'a'},votes:{planner:'budget',engineer:'safety',science:'data',comms:'comms'}},toasts:[],guide:false,gstep:0,sources:false,voteOpen:false,setupOpen:true,info:false,runs:[],cmp:[],saveMsg:''};s.p.r=ORBITS.ell.r;s.history=[snap(s)];return s;})();
+  cvs=new Set();vt=0;swarmOut={pts:[]};grP=1;
+  cv=el=>{if(el)this.cvs.add(el);};
+
+  componentDidMount(){this.raf=requestAnimationFrame(this.frame);this.startTimer();this.tm={};let runs=[],seen=false;try{runs=JSON.parse(localStorage.getItem('bh5000_runs')||'[]');seen=!!localStorage.getItem('bh5000_guide_seen');}catch(e){}this.setState({runs,guide:!seen});}
+  componentWillUnmount(){cancelAnimationFrame(this.raf);clearInterval(this.iv);}
+  startTimer(){clearInterval(this.iv);this.iv=setInterval(()=>{if(this.state.status==='RUNNING'&&!this.state.active)this.tick();},700/this.state.speed);}
+  tick(){const ns=this.advance(this.state);if(ns)this.setState(ns);}
+
+  vizState(){const st=this.state,P=phys(st);return{r:st.p.r,mass:st.p.mass,markers:st.p.markers,anchorR:Math.max(14,st.p.r*2),frac:{lost:st.nodes.lost/P.ext,damaged:st.nodes.damaged/P.ext,inactive:st.nodes.inactive/P.ext},vt:this.vt};}
+  gViz(){const g=this.state.g;return{mass:Math.pow(10,g.mass),cam:g.cam*Math.PI/180,dist:g.dist,inc:g.inc,res:g.res};}
+
+  frame=(ts)=>{const V=window.BHViz;const dt=Math.min(0.1,((ts-(this.lastTs||ts))/1000));this.lastTs=ts;const st=this.state;
+    if(st.status==='RUNNING'&&!st.active)this.vt+=dt*Math.min(4,st.speed);
+    if(st.gr.status==='TRACING'){this.grP=Math.min(1,this.grP+dt/1.6);const tk=Math.floor(this.grP*20);if(this.grP>=1)this.finishRun();else if(tk!==st.grTick)this.setState({grTick:tk});}
+    if(V){const S=this.vizState();const G=this.gViz();
+      for(const el of this.cvs){if(!el.isConnected){this.cvs.delete(el);continue;}const k=el.dataset.kind;
+        if(k==='bh')V.drawBH(el,S,el.dataset.mode);
+        else if(k==='swarm')V.drawSwarm(el,S,{zoom:st.zoom,filters:st.filters,layers:st.layers,sel:st.sel},this.swarmOut);
+        else if(k==='grrt')V.drawGRRT(el,G,st.split,st.gr.status==='TRACING'?this.grP:1,'main');
+        else if(k==='grrt-mini')V.drawGRRT(el,{...G,res:3},0.5,1,'mini');
+        else if(k==='rays')V.drawRays(el,st.g.rays,st.g.dist);
+        else if(k==='td')V.tdChart(el,st.p.r,20);
+        else if(k==='chart')V.chart(el,this.chartSpec(el.dataset.chart));
+        else if(k==='gauge'){const g=this.gaugeSpec(el.dataset.g);if(g)V.gauge(el,g[0],g[1],g[2]);}}}
+    this.raf=requestAnimationFrame(this.frame);};
+
+  chartSpec(k){const st=this.state,H=st.history,xm=Math.max(st.p.duration,H.length-1),xa=Math.max(1,H.length-1),m=f=>H.map(f);
+    const one=(f,c,o)=>Object.assign({xmax:xa,series:[{d:m(f),c,fill:c.replace(')',',0.08)').replace('rgb','rgba')}]},o||{});
+    switch(k){
+     case'telemetry':return{xmax:xm,series:[{d:m(h=>h.fuel),c:CC.amber},{d:m(h=>h.battery),c:CC.cyan},{d:m(h=>h.shield),c:CC.green},{d:m(h=>h.chassis),c:'#B7C3D1'},{d:m(h=>h.data),c:CC.text}]};
+     case'resources':return{xmax:xm,series:[{d:m(h=>h.fuel),c:CC.amber},{d:m(h=>h.battery),c:CC.cyan},{d:m(h=>h.shield),c:CC.green},{d:m(h=>h.chassis),c:'#B7C3D1'}]};
+     case'nodes':return{xmax:xm,series:[{d:m(h=>h.op),c:CC.cyan},{d:m(h=>h.dmg),c:CC.amber},{d:m(h=>h.lost),c:CC.red}]};
+     case'data':return{xmax:xm,th:[{v:100,c:'rgba(56,217,150,0.6)'}],series:[{d:m(h=>h.data),c:CC.cyan,fill:'rgba(85,221,224,0.08)'}]};
+     case'env-rad':return{xmax:xm,max:150,th:[{v:phys(st).lim,c:'rgba(255,92,100,0.75)'}],series:[{d:m(h=>h.rad),c:CC.amber},{d:m(h=>h.shield),c:CC.green}]};
+     case'env-stress':return{xmax:xm,max:100,th:[{v:25,c:'rgba(255,181,71,0.6)'},{v:45,c:'rgba(255,92,100,0.75)'}],series:[{d:m(h=>h.stress),c:CC.amber},{d:m(h=>h.chassis),c:CC.green}]};
+     case'env-temp':return{xmax:xm,max:800,th:[{v:450,c:'rgba(255,92,100,0.75)'}],series:[{d:m(h=>h.temp),c:CC.amber}]};
+     case'env-power':return{xmax:xm,th:[{v:15,c:'rgba(255,92,100,0.75)'}],series:[{d:m(h=>h.battery),c:CC.cyan},{d:m(h=>h.comm),c:'#B7C3D1'}]};
+     case'a-fuel':return{xmax:xa,series:[{d:m(h=>h.fuel),c:CC.amber,fill:'rgba(255,181,71,0.08)'}]};
+     case'a-bat':return{xmax:xa,th:[{v:15,c:'rgba(255,92,100,0.6)'}],series:[{d:m(h=>h.battery),c:CC.cyan,fill:'rgba(85,221,224,0.08)'}]};
+     case'a-shield':return{xmax:xa,series:[{d:m(h=>h.shield),c:CC.green,fill:'rgba(56,217,150,0.08)'}]};
+     case'a-chassis':return{xmax:xa,series:[{d:m(h=>h.chassis),c:'#B7C3D1',fill:'rgba(183,195,209,0.08)'}]};
+     case'a-dil':return{xmax:xa,min:0,max:1,series:[{d:m(h=>h.dil),c:CC.cyan}]};
+     case'a-r':return{xmax:xa,min:0,max:20,th:[{v:3,c:'rgba(255,181,71,0.6)'}],series:[{d:m(h=>h.r),c:CC.cyan}]};
+     case'a-rad':return{xmax:xa,max:150,series:[{d:m(h=>h.lvl),c:'rgba(255,92,100,0.7)'},{d:m(h=>h.rad),c:CC.amber}]};
+     case'a-stress':return{xmax:xa,max:100,th:[{v:25,c:'rgba(255,181,71,0.6)'}],series:[{d:m(h=>h.stress),c:CC.amber}]};
+    }return null;}
+  gaugeSpec(k){const st=this.state,P=phys(st),r=st.res;
+    if(k==='rad')return[P.rad/150,P.excess>20?CC.red:P.excess>0?CC.amber:CC.green,P.lim/150];
+    if(k==='shield')return[r.shield/100,lvl(r.shield)];
+    if(k==='stress')return[P.stress/100,P.stress>45?CC.red:P.stress>25?CC.amber:CC.green,0.25];
+    if(k==='temp')return[P.tempK/800,P.tempK>450?CC.red:P.tempK>380?CC.amber:CC.green,450/800];
+    if(k==='power')return[r.battery/100,lvl(r.battery),0.15];
+    const cf=st.cfg,lm=VEH[cf.veh].lim,bd=DIFF[cf.diff].budget;
+    if(k==='g-fuel')return[r.fuel/100,lvl(r.fuel)];if(k==='g-bat')return[r.battery/100,lvl(r.battery)];if(k==='g-data')return[r.data/100,CC.cyan];if(k==='g-comm')return[r.comm/100,lvl(r.comm+10)];
+    if(k==='g-mass'){const q=cl(P.mass/lm,0,1);return[q,!cf.sandbox&&P.mass>lm?CC.red:q>0.85?CC.amber:CC.green];}
+    if(k==='g-bud'){const q=cf.sandbox?1:cl(P.budgetLeft/bd,0,1);return[q,q>0.3?CC.green:q>0.12?CC.amber:CC.red];}
+    return null;}
+
+  advance(st){if(st.active||st.outcome)return null;const P=phys(st);
+    let seed=st.seed,spike=Math.max(0,st.spike-1);const log=[...st.log];const step=st.step+1;
+    if(st.p.random){seed=(seed*1664525+1013904223)%4294967296;if(seed/4294967296<0.035&&spike===0){spike=3;log.push({step,type:'warn',text:'RANDOM EVENT: radiation surge ×1.8 for 3 steps (seeded).'});}}
+    const res={...st.res};res.fuel=cl(res.fuel+P.fuelR,0,100);res.battery=cl(res.battery+P.batR,0,100);res.shield=cl(res.shield+P.shR,0,100);res.chassis=cl(res.chassis+P.chR,0,100);res.comm=cl(res.comm+(P.commT-res.comm)*0.2,0,100);res.data=cl(res.data+P.dataR,0,100);
+    const nodes={...st.nodes};nodes.damaged=Math.max(0,nodes.damaged+P.dmgR-nodes.damaged*0.02);nodes.lost=Math.min(P.ext,nodes.lost+P.lostR);nodes.inactive=res.battery<15?P.ext*0.3*(15-res.battery)/15:0;
+    if(nodes.damaged+nodes.lost+nodes.inactive>P.ext)nodes.damaged=Math.max(0,P.ext-nodes.lost-nodes.inactive);
+    let milestone=st.milestone;const ms=Math.floor(nodes.lost/250);if(ms>milestone){milestone=ms;log.push({step,type:'crit',text:'SYSTEM FAILURE: cumulative node losses passed '+(ms*250).toLocaleString()+'.'});}
+    if(st.res.fuel>0&&res.fuel<=0)log.push({step,type:'crit',text:'Propellant exhausted. Orbit correction disabled.'});
+    if(P.r<3&&st.step===0)log.push({step,type:'warn',text:'Swarm below 3 Rs: no stable circular orbit, continuous station-keeping required.'});
+    let ns={...st,step,res,nodes,seed,spike,log,milestone,probeT:st.probeT+P.dil,spent:st.spent+OPS_COST+ORB[P.orb]*0.6};
+    ns.history=[...st.history,snap(ns)];
+    const P2=phys(ns);let reason=judge(ns,P2),success=false;
+    if(!reason&&res.data>=100){const mr=Math.min(...ns.history.map(h=>h.r)),S=SCEN[ns.cfg.scen];if(mr>S.maxR)reason='Data is 100% complete, but the goal "'+S.goal+'" was not met (closest approach '+mr.toFixed(1)+' Rs).';else if(ns.cfg.scen==='tidal'&&res.chassis<25)reason='Data complete, but probe body health fell to '+res.chassis.toFixed(0)+'% (needs 25%+) for the stress test.';else if(ns.cfg.scen==='clock'&&res.comm<30)reason='Data complete, but the signal home was only '+res.comm.toFixed(0)+'% (needs 30%+) to compare clocks.';else success=true;}else if(!reason&&step>=st.p.duration)reason='Observation window closed with only '+res.data.toFixed(1)+'% of the required dataset.';
+    if(success||reason){const o=this.makeOutcome(ns,P2,success,reason);log.push({step,type:success?'ok':'crit',text:success?'MISSION ACCOMPLISHED. Dataset complete.':'MISSION FAILED: '+reason});return{...ns,status:success?'COMPLETED':'FAILED',outcome:o,screen:'outcome'};}
+    for(const code of Object.keys(EV)){const d=EV[code];const last=st.fired[code];if(last!=null&&step-last<30)continue;if(d.test(ns,P2)){
+      const ev={code,title:d.title,severity:d.sev(ns,P2),cause:d.cause(ns,P2),affected:d.affected,step,status:'ACTIVE',decision:null,delta:''};
+      log.push({step,type:ev.severity==='CRITICAL'?'crit':'warn',text:code+' '+d.title+' — decision required.'});
+      return{...ns,active:ev,events:[...st.events,ev],fired:{...st.fired,[code]:step},wasRunning:st.status==='RUNNING',status:'PAUSED'};}}
+    return ns;}
+
+  scoreOf(s,P,success){const c=s.cfg,D=DIFF[c.diff],opPct=P.op/P.ext*100,budPct=isFinite(P.budgetLeft)?cl(P.budgetLeft/D.budget*100,0,100):0;
+    const base=s.res.data*4+s.res.fuel*1.5+s.res.chassis*1.5+s.res.shield+opPct*2+budPct;let team=0,cons=0;
+    if(c.team){const act=Object.keys(ROLES).filter(k=>c.crew[k]),n=act.length||1,cnt={data:0,safety:0,budget:0,comms:0};act.forEach(k=>cnt[c.votes[k]]++);const met={data:s.res.data,safety:(s.res.shield+s.res.chassis)/2,budget:budPct,comms:s.res.comm};Object.keys(cnt).forEach(k=>{team+=cnt[k]/n*met[k]*3;});cons=n>1?(Math.max(...Object.values(cnt))/n>=0.5?50:-50):0;team+=cons+s.consensus*25;}
+    return{base:Math.round(base),team:Math.round(team),cons,score:Math.max(0,Math.round((base+team)*D.score*(success?1:0.5)))};}
+  makeOutcome(s,P,success,reason){const c=s.cfg,D=DIFF[c.diff],opPct=P.op/P.ext*100,H=s.history,sc=this.scoreOf(s,P,success),score=sc.score;
+    const mn=fn=>Math.min(...H.map(fn)),pk=fn=>Math.max(...H.map(fn)),veh=VEH[c.veh];
+    const rating=score>=1000?'A+ · EXCEPTIONAL':score>=800?'A · STRONG':score>=600?'B · ADEQUATE':'C · MARGINAL';
+    const crit=s.log.filter(l=>l.type==='crit'||l.type==='warn').slice(-6).map(l=>({t:'T+'+l.step+'h',text:l.text}));
+    const tip=success?'Try a harder difficulty or a cheaper rocket to raise your score.':/Comms/i.test(reason)?'Add the High-gain antenna, give comms more power, or observe from farther out.':/Shield|radiation/i.test(reason)?'Switch to Heavy shielding or raise the protection level.':/Structural|tidal/i.test(reason)?'Observe from farther out (above 4 Rs) or lower the tidal multiplier.':/Battery/i.test(reason)?'Lower the protection level, or keep optional upgrades off to save power.':/Budget/i.test(reason)?'Pick a lighter rocket or skip costly upgrades.':/window/i.test(reason)?'Use Quantum sensors, give instruments more power, or fly closer.':/goal|Data complete/i.test(reason)?'Choose a closer orbit that matches the scenario goal.':'Review the event log and try a different balance of power and distance.';
+    const an=[{k:success?'WHY IT WORKED':'WHY IT FAILED',c:success?CC.green:CC.red,v:success?'You collected the full dataset by T+'+s.step+'h and kept '+opPct.toFixed(0)+'% of the swarm working.':reason},
+     {k:'CLOSEST APPROACH',c:CC.cyan,v:'Your probe got as close as '+mn(h=>h.r).toFixed(1)+' Rs, where clocks ran at '+mn(h=>h.dil).toFixed(2)+'x Earth speed. Closer means more data, but stronger radiation and stretching.'},
+     {k:'BIGGEST STRAIN',c:CC.amber,v:'Peak radiation '+pk(h=>h.rad).toFixed(0)+' against protection '+P.lim+'. Peak stretching '+pk(h=>h.stress).toFixed(0)+' (safe below 25). Weakest signal '+mn(h=>h.comm).toFixed(0)+'%.'},
+     {k:'PARTS & BUDGET',c:CC.cyan,v:(c.sandbox?'Sandbox: no budget limit. ':'Spent $'+(setupCost(c)+s.spent).toFixed(0)+'M of $'+D.budget+'M. ')+'Probe weight '+P.mass+' kg on the '+veh.name+' rocket. Parts: '+PK.map(k=>PARTS[k][c.parts[k]].n).join(', ')+'.'},
+     {k:'TRY NEXT',c:CC.muted,v:tip}];
+    if(c.team)an.splice(4,0,{k:'TEAM EFFECT',c:CC.cyan,v:'The crew vote '+(sc.cons>0?'was aligned (+50)':sc.cons<0?'was split (−50)':'had no conflict')+' and added '+sc.team+' points in total.'});
+    return{success,failure:!success,reason:success?'Full science dataset returned at T+'+s.step+'h with '+P.op.toLocaleString('en-US',{maximumFractionDigits:0})+' nodes operational.':reason,step:s.step,score,rating,analysis:an,breakdown:'Score = (base '+sc.base+(c.team?' + team '+sc.team:'')+') × difficulty '+D.score+(success?'':' × 0.5 for a failed mission')+(c.sandbox?' · sandbox runs are not ranked':''),
+     stats:success?[{k:'DATA COLLECTED',v:s.res.data.toFixed(1)+'%'},{k:'FUEL REMAINING',v:s.res.fuel.toFixed(1)+'%'},{k:'OPERATIONAL NODES',v:Math.round(P.op).toLocaleString()},{k:'STRUCTURAL INTEGRITY',v:s.res.chassis.toFixed(1)+'%'}]
+      :[{k:'DATA COLLECTED',v:s.res.data.toFixed(1)+'%'},{k:'FUEL REMAINING',v:s.res.fuel.toFixed(1)+'%'},{k:'LOST NODES',v:Math.round(s.nodes.lost).toLocaleString()},{k:'STRUCTURAL INTEGRITY',v:s.res.chassis.toFixed(1)+'%'}],
+     objectives:[{mark:'✓',c:CC.green,text:'Science dataset 100% returned'},{mark:opPct>=80?'✓':'○',c:opPct>=80?CC.green:CC.muted,text:'Swarm ≥ 80% operational ('+opPct.toFixed(0)+'%)'},{mark:s.res.chassis>=50?'✓':'○',c:s.res.chassis>=50?CC.green:CC.muted,text:'Chassis ≥ 50% ('+s.res.chassis.toFixed(0)+'%)'},{mark:mn(h=>h.r)<=SCEN[c.scen].maxR?'✓':'○',c:mn(h=>h.r)<=SCEN[c.scen].maxR?CC.green:CC.muted,text:SCEN[c.scen].goal}],
+     critical:crit.length?crit:[{t:'—',text:'No warnings recorded before failure.'}]};}
+
+  setP(k,v){const st=this.state;if((k==='mass'||k==='markers'||k==='random')&&st.status!=='READY')return;if(st.outcome)return;
+    const upd={p:{...st.p,[k]:v}};
+    if(k==='r'&&st.status!=='READY'){if(st.res.fuel<=0)return;const cost=Math.abs(v-st.p.r)*1.2;upd.res={...st.res,fuel:cl(st.res.fuel-cost,0,100)};}
+    if(k==='duration')upd.p.duration=Math.max(st.step+1,v);
+    if(st.status==='READY'){const ns={...st,...upd};upd.history=[snap(ns)];}
+    this.setState(upd);this.whyP(k,st,{...st,...upd,p:upd.p,res:upd.res||st.res});}
+  decide(i){const st=this.state,ev=st.active;if(!ev)return;const d=EV[ev.code],ch=d.choices[i];const P=phys(st);
+    const s={...st,p:{...st.p},res:{...st.res},nodes:{...st.nodes},mods:{...st.mods}};ch.apply(s,P);
+    for(const k of Object.keys(s.res))s.res[k]=cl(s.res[k],0,100);
+    const parts=[];[['fuel','Fuel'],['battery','Battery'],['shield','Shield'],['chassis','Chassis'],['data','Data']].forEach(([k,l])=>{const dd=s.res[k]-st.res[k];if(Math.abs(dd)>0.05)parts.push(l+' '+sgn(dd,1)+'%');});
+    if(s.p.r!==st.p.r)parts.push('r '+sgn(s.p.r-st.p.r,1)+' Rs');if(s.p.shieldLvl!==st.p.shieldLvl)parts.push('Protection → '+s.p.shieldLvl);if(s.p.duration!==st.p.duration)parts.push('Window → '+s.p.duration+'h');if(s.p.orb!==st.p.orb)parts.push('Orbit corr. → '+s.p.orb);
+    const dl=s.nodes.lost-st.nodes.lost;if(dl>0.5)parts.push('Nodes lost +'+Math.round(dl));if(s.mods.anchor!==st.mods.anchor)parts.push('Anchor baseline +15');if(s.mods.tx!==st.mods.tx)parts.push('Tx rate ×0.7');if(s.mods.critical!==st.mods.critical)parts.push('Critical-data mode');
+    const delta=parts.join(' · ')||'No immediate change';
+    s.events=st.events.map(e=>e===ev?{...e,status:'RESOLVED',decision:ch.label,delta}:e);s.active=null;s.status=st.wasRunning?'RUNNING':'PAUSED';
+    s.log=[...st.log,{step:st.step,type:'decision',text:ev.code+' → '+ch.label+'. '+delta+'.'}];const X=EVX[ev.code];let crewTxt='';if(st.cfg.team){const act=Object.keys(ROLES).filter(k=>st.cfg.crew[k]),fav=act.filter(k=>X.by[i].includes(k)).length;s.consensus=st.consensus+(fav/act.length*2-1);crewTxt=' Crew backing: '+fav+' of '+act.length+'.';}this.setState(s);this.toast('decision','"'+ch.label+'": '+X.why[i]+' Result: '+delta+'.'+crewTxt);}
+
+  start=()=>{const st=this.state;if(st.status!=='READY')return;const P=phys(st),c=st.cfg;
+    if(!c.sandbox&&P.mass>VEH[c.veh].lim){this.toast('payload','Cannot launch: your probe weighs '+P.mass+' kg but the '+VEH[c.veh].name+' rocket can only lift '+VEH[c.veh].lim+' kg. Pick a bigger rocket or lighter parts.');this.setState({screen:'overview',setupOpen:true});return;}
+    if(!c.sandbox&&P.budgetLeft<5){this.toast('budget','Cannot launch: setup costs $'+setupCost(c)+'M and your budget is $'+DIFF[c.diff].budget+'M, leaving too little to run the mission. Choose cheaper options.');this.setState({screen:'overview',setupOpen:true});return;}
+    if(c.team&&!st.voteDone){this.setState({voteOpen:'launch'});return;}
+    this.launch();};
+  launch=()=>{this.setState(s=>({status:'RUNNING',voteOpen:false,voteDone:true,log:[...s.log,{step:0,type:'info',text:'Launch: '+SCEN[s.cfg.scen].title+' · '+DIFF[s.cfg.diff].label+(s.cfg.sandbox?' · SANDBOX':'')+(s.cfg.team?' · TEAM':'')+'.'}]}));};
+  pause=()=>{if(this.state.status==='RUNNING')this.setState({status:'PAUSED'});};
+  resume=()=>{if(this.state.status==='PAUSED'&&!this.state.active)this.setState({status:'RUNNING'});};
+  stepOnce=()=>{const st=this.state;if(st.active||st.outcome||(st.status!=='READY'&&st.status!=='PAUSED'))return;const ns=this.advance({...st,status:'PAUSED'});if(ns)this.setState(ns);};
+  resetTo(no,screen){const st=this.state;const f={...fresh(no),cfg:st.cfg};f.p.r=ORBITS[st.cfg.orbit].r;f.history=[snap(f)];this.vt=0;this.setState({...f,screen:screen||st.screen});}
+  reset=()=>this.resetTo(this.state.mission);
+  setSpeed(n){this.setState({speed:n},()=>this.startTimer());}
+  finishRun(){const st=this.state,g=st.g;const runs=[{title:'RUN '+String(st.gr.runs.length+1).padStart(2,'0')+' · '+new Date().toISOString().slice(11,19)+' UTC',desc:'i '+g.inc+'° · cam '+g.cam+'° · d '+g.dist+' Rs · '+g.rays+' rays · res L'+g.res+' · illustrative'}].concat(st.gr.runs).slice(0,5);this.setState({gr:{status:'COMPLETE',runs}});}
+
+  renderVals(){
+    const st=this.state,p=st.p,res=st.res,P=phys(st),V=window.BHViz,cf=st.cfg,DF=DIFF[cf.diff],veh=VEH[cf.veh];
+    const f1=x=>x.toFixed(1),f2=x=>x.toFixed(2);
+    const opPct=P.op/P.ext*100;const started=st.status!=='READY';
+    const statusText=st.active?'DECISION REQUIRED':st.status;
+    const statusColor=st.active?CC.amber:{READY:CC.cyan,RUNNING:CC.green,PAUSED:CC.amber,COMPLETED:CC.green,FAILED:CC.red}[st.status];
+    const health=Math.min(res.shield,res.chassis,res.battery,opPct);
+    const simDate=new Date(Date.UTC(2026,10,5,0,0,0)+st.step*3600e3).toISOString().replace('T',' ').slice(0,16)+' UTC';
+    const can={start:st.status==='READY',pause:st.status==='RUNNING',resume:st.status==='PAUSED'&&!st.active,step:(st.status==='READY'||st.status==='PAUSED')&&!st.active,reset:started||st.step>0};
+    const o=b=>b?1:0.35;
+    const go=s=>()=>this.setState({screen:s});
+    const navItem=([id,n,label])=>{const on=st.screen===id;return{n,label,go:go(id),bg:on?'rgba(85,221,224,0.08)':'transparent',color:on?CC.text:CC.muted,bar:on?CC.cyan:'transparent',nc:on?CC.cyan:'#4E6177'};};
+    const nav=[['overview','01','Mission Overview'],['swarm','02','Swarm Network'],['td','03','Time Dilation Monitoring'],['env','04','Environmental Analysis'],['grrt','05','GRRT Imaging Laboratory'],['sim','06','Mission Simulation']].map(navItem);
+    const nav2=[['analytics','07','Mission Analytics']].concat(st.outcome?[['outcome','08','Mission Outcome']]:[]).map(navItem);
+    const speeds=[1,2,5,10].map(n=>({label:n+'x',set:()=>this.setSpeed(n),bg:st.speed===n?CC.cyan:'transparent',color:st.speed===n?'#080D17':CC.muted}));
+    const onP=(k,tr)=>e=>this.setP(k,tr?tr(+e.target.value):+e.target.value);
+    const rsText=fmtE(P.RsKm)+' km';const rText=f2(p.r)+' Rs';
+    const massText=fmtE(p.mass)+' M☉';
+    const repoNote=started?(res.fuel<=0?'Propellant exhausted: repositioning unavailable.':'Repositioning costs 1.2% fuel per Rs during the mission.'):'Free to set before mission start.';
+    const pctW=v=>cl(v,0,100).toFixed(1)+'%';
+    const radC=P.excess>20?CC.red:P.excess>0?CC.amber:CC.green;const stC=P.stress>45?CC.red:P.stress>25?CC.amber:CC.green;
+    const envBars=[{label:'Radiation exposure',txt:f1(P.rad)+' / '+P.lim,w:pctW(P.rad/1.5),c:radC},{label:'Tidal stress',txt:f1(P.stress)+' idx',w:pctW(P.stress),c:stC},{label:'Thermal shield integrity',txt:f1(res.shield)+'%',w:pctW(res.shield),c:lvl(res.shield)},{label:'Chassis integrity',txt:f1(res.chassis)+'%',w:pctW(res.chassis),c:lvl(res.chassis)},{label:'Power level',txt:f1(res.battery)+'%',w:pctW(res.battery),c:lvl(res.battery)},{label:'Fuel remaining',txt:f1(res.fuel)+'%',w:pctW(res.fuel),c:lvl(res.fuel)}];
+    const N=x=>Math.round(x).toLocaleString('en-US');
+    const swarmCounts=[{label:'Active observation',v:N(P.op),c:CC.cyan},{label:'Communication anchors',v:'160',c:CC.green},{label:'Damaged',v:N(st.nodes.damaged),c:CC.amber},{label:'Lost',v:N(st.nodes.lost),c:CC.red},{label:'Inactive (standby)',v:N(st.nodes.inactive),c:'#5B6B7E'},{label:'Hypothetical markers',v:String(p.markers),c:'#B7C3D1'}];
+    const swarmSeg=[{w:(P.op/NT*100)+'%',c:CC.cyan},{w:(NA/NT*100)+'%',c:CC.green},{w:(st.nodes.damaged/NT*100)+'%',c:CC.amber},{w:(st.nodes.lost/NT*100)+'%',c:CC.red},{w:(st.nodes.inactive/NT*100)+'%',c:'#5B6B7E'}];
+    const logC={info:CC.muted,warn:CC.amber,crit:CC.red,decision:CC.cyan,ok:CC.green};
+    const logMap=l=>({t:'T+'+l.step+'h',text:l.text,c:logC[l.type]});
+    const logShort=st.log.slice(-6).reverse().map(logMap),logLong=st.log.slice(-40).reverse().map(logMap);
+    const progressText=st.outcome?(st.outcome.success?'Mission accomplished':'Mission failed'):'T+'+st.step+'h of '+p.duration+'h window · data '+f1(res.data)+'%';
+    // swarm
+    const swarmCards=[{label:'TOTAL NODES',v:'5,000',c:CC.text},{label:'ACTIVE EXTERIOR',v:N(P.op),c:CC.cyan},{label:'INACTIVE',v:N(st.nodes.inactive),c:'#5B6B7E'},{label:'DAMAGED',v:N(st.nodes.damaged),c:CC.amber},{label:'LOST',v:N(st.nodes.lost),c:CC.red},{label:'INSIDE-HORIZON MARKERS',v:String(p.markers),c:'#B7C3D1'}];
+    const tog=(grp,k)=>()=>this.setState({[grp]:{...st[grp],[k]:!st[grp][k]}});
+    const chip=(on,dot)=>({bg:on?'rgba(85,221,224,0.08)':'transparent',border:on?'#2F4A63':'#1B283B',color:on?CC.text:'#4E6177',dot:on?dot:'#2A3B52'});
+    const filterChips=[['active','Active',CC.cyan],['anchor','Anchors',CC.green],['damaged','Damaged',CC.amber],['lost','Lost',CC.red],['inactive','Inactive','#5B6B7E'],['marker','Hypothetical markers','#B7C3D1']].map(([k,l,c])=>({label:l,toggle:tog('filters',k),...chip(st.filters[k],c)}));
+    const layerChips=[['disk','Disk'],['orbits','Orbits'],['links','Links'],['traj','Trajectory'],['grid','Grid']].map(([k,l])=>({label:l,toggle:tog('layers',k),...chip(st.layers[k],CC.cyan)}));
+    let selInfo={id:'',cat:'',c:CC.muted,rows:[],note:''};const hasSel=!!(V&&st.sel);
+    if(hasSel){const S=this.vizState();const n=V.node(st.sel,S);const a=V.angle(n,this.vt);const hv=q=>{const t=Math.sin(st.sel*q)*43758.5453;return t-Math.floor(t);};
+      const catL={active:'ACTIVE',anchor:'ANCHOR',damaged:'DAMAGED',lost:'LOST',inactive:'INACTIVE',marker:'HYPOTHETICAL'}[n.cat];
+      const mult=n.cat==='lost'?0:n.cat==='damaged'?0.55:1;const pp=v=>n.cat==='marker'?'—':f1(cl(v,0,100))+'%';
+      const deg=((a*180/Math.PI)%360+360)%360;
+      const comm={active:'LINKED · anchor A-'+String(st.sel%32+1).padStart(2,'0'),anchor:'RELAY · uplink '+f1(res.comm)+'%',damaged:'DEGRADED LINK',lost:'NO SIGNAL',inactive:'STANDBY · power saving',marker:'NONE · no causal link to exterior'}[n.cat];
+      const dataGB=n.cat==='marker'?'—':n.cat==='anchor'?f1(res.data*0.24*(0.8+hv(3)*0.4))+' GB relayed':f2(res.data/100*0.5*(0.8+hv(5)*0.4)*(n.cat==='lost'?0.5:1))+' GB';
+      selInfo={id:'BH-'+pad4(n.id),cat:catL,c:V.COL[n.cat],
+       rows:[{k:'Position (x, y)',v:f2(n.r*Math.cos(a))+', '+f2(n.r*Math.sin(a))+' Rs'},{k:'Phase angle',v:f1(deg)+'°'},{k:'Orbital distance',v:f2(n.r)+' Rs · '+fmtE(n.r*P.RsKm)+' km'},{k:'Fuel',v:pp((res.fuel+(hv(7)-0.5)*8)*(n.cat==='lost'?0:1))},{k:'Power',v:pp((res.battery+(hv(11)-0.5)*6)*(n.cat==='lost'?0:1))},{k:'Structural integrity',v:pp(res.chassis*mult+(hv(13)-0.5)*4)},{k:'Data collected',v:dataGB},{k:'Communication',v:comm}],
+       note:n.cat==='marker'?'Hypothetical scenario marker inside the event horizon. It is not a tracked spacecraft: no telemetry, commands or links are possible.':n.r<3&&n.cat!=='anchor'?'Inside 3 Rs no stable circular orbit exists; this node holds position by continuous thrust.':n.cat==='anchor'?'External anchor relaying swarm data to the distant ground segment.':'Exterior node on a circular reference orbit.'};}
+    // td
+    const tdProbe=st.refT*P.dil,tdD=st.refT-tdProbe;
+    const tdRows=[{k:'Mass M',v:massText,c:CC.text},{k:'Mass (kg)',v:fmtE(p.mass*MSUN)+' kg',c:CC.text},{k:'Rs = 2GM/c²',v:rsText,c:CC.text},{k:'Rs (AU)',v:fmtE(P.RsKm/1.496e8)+' AU',c:CC.muted},{k:'r (normalised)',v:f2(p.r)+' Rs',c:CC.text},{k:'r (physical)',v:fmtE(p.r*P.RsKm)+' km',c:CC.text},{k:'dτ/dt',v:P.dil.toFixed(8),c:CC.cyan},{k:'Slowdown',v:((1-P.dil)*100).toFixed(4)+'%',c:CC.amber}];
+    const tdExplain='At r = '+f2(p.r)+' Rs a stationary clock ticks at '+P.dil.toFixed(4)+' of the distant reference rate. Over '+f1(st.refT)+' h of reference time it records '+f2(tdProbe)+' h. The ratio depends only on r/Rs; changing mass rescales Rs and the physical distance ('+fmtE(p.r*P.RsKm)+' km).';
+    // env
+    const rSafeRad=3*Math.pow(p.radI*2/Math.max(1,P.lim),1/1.2),rSafeSt=4*Math.pow(p.tidalMult*35*Math.pow(4.3e6/p.mass,0.25)/25,1/3);const rSafe=cl(Math.max(rSafeRad,rSafeSt,3)+0.1,1.05,20);
+    const safe={rad:'r ≥ '+f2(rSafeRad)+' Rs',stress:'r ≥ '+f2(rSafeSt)+' Rs',btn:p.r>=rSafe-0.05?'CURRENT POSITION IS SAFE':'MOVE PROBE TO r = '+f2(rSafe)+' Rs',go:rSafe};
+    const envSliders=[{label:'RADIATION INTENSITY I',txt:String(p.radI),min:0,max:100,step:1,v:p.radI,on:onP('radI')},{label:'TEMPERATURE PARAMETER',txt:String(p.temp),min:0,max:100,step:1,v:p.temp,on:onP('temp')},{label:'TIDAL STRESS MULTIPLIER k',txt:'×'+f2(p.tidalMult),min:0.25,max:3,step:0.05,v:p.tidalMult,on:onP('tidalMult')},{label:'SHIELDING LEVEL',txt:String(p.shieldLvl),min:0,max:100,step:1,v:p.shieldLvl,on:onP('shieldLvl')},{label:'OBSERVATION DISTANCE',txt:rText,min:1.05,max:20,step:0.05,v:p.r,on:onP('r')}];
+    const gauges=[{key:'rad',label:'RADIATION',v:f1(P.rad),unit:'EXPOSURE IDX',sub:'Limit '+P.lim,c:radC},{key:'shield',label:'SHIELD',v:f1(res.shield),unit:'% INTEGRITY',sub:sgn(P.shR)+' %/step',c:lvl(res.shield)},{key:'stress',label:'STRUCTURAL',v:f1(P.stress),unit:'STRESS IDX',sub:'Tolerance 25',c:stC},{key:'temp',label:'TEMPERATURE',v:Math.round(P.tempK)+'',unit:'K (MODELED)',sub:'Shield limit 450 K',c:P.tempK>450?CC.red:P.tempK>380?CC.amber:CC.green},{key:'power',label:'POWER',v:f1(res.battery),unit:'% BATTERY',sub:sgn(P.batR)+' %/step',c:lvl(res.battery)}];
+    const envWarn=[];
+    if(P.excess>0)envWarn.push({sev:P.excess>20?'CRITICAL':'WARNING',c:P.excess>20?CC.red:CC.amber,text:'Exposure '+f1(P.rad)+' exceeds protection limit '+P.lim+' by '+f1(P.excess)+'. Shield loses '+f2(-P.shR)+'%/step; '+f1(P.excess*0.5)+' nodes damaged/step. RADIATION SPIKE event will trigger.'});
+    else envWarn.push({sev:'NOMINAL',c:CC.green,text:'Radiation within protection limit. Shield wear '+f2(-P.shR)+'%/step from baseline exposure.'});
+    if(P.stress>25)envWarn.push({sev:P.stress>45?'CRITICAL':'WARNING',c:P.stress>45?CC.red:CC.amber,text:'Stress index '+f1(P.stress)+' above tolerance 25. Chassis loses '+f2(-P.chR)+'%/step. Move to r ≥ '+f2(rSafeSt)+' Rs to stop accelerated wear.'});
+    else envWarn.push({sev:'NOMINAL',c:CC.green,text:'Structural stress within tolerance. Chassis wear '+f2(-P.chR)+'%/step.'});
+    if(P.tempK>450)envWarn.push({sev:'WARNING',c:CC.amber,text:'Modeled temperature '+Math.round(P.tempK)+' K above 450 K: extra shield wear '+f2(P.thX)+'%/step and +0.10%/step thermal-control power.'});
+    if(p.r<3)envWarn.push({sev:'WARNING',c:CC.amber,text:'Below 3 Rs no stable circular orbit exists. Station-keeping burns '+f2(P.keep)+'% fuel/step on top of orbit correction.'});
+    const envCharts=[{key:'env-rad',title:'RADIATION EXPOSURE · SHIELD',legend:'amber exposure · green shield · red limit'},{key:'env-stress',title:'TIDAL STRESS · CHASSIS',legend:'amber stress · green chassis'},{key:'env-temp',title:'TEMPERATURE (K)',legend:'red = 450 K'},{key:'env-power',title:'POWER · COMMS',legend:'cyan battery · grey comms'}];
+    // grrt
+    const g=st.g;const onG=k=>e=>this.setState({g:{...g,[k]:+e.target.value},gr:{...st.gr,status:st.gr.status==='TRACING'?'TRACING':'MODIFIED'}});
+    const gSliders=[{label:'BLACK HOLE MASS',txt:fmtE(Math.pow(10,g.mass))+' M☉',min:1,max:10,step:0.01,v:g.mass,on:onG('mass')},{label:'CAMERA ANGLE',txt:g.cam+'°',min:-180,max:180,step:1,v:g.cam,on:onG('cam')},{label:'OBSERVER DISTANCE',txt:g.dist+' Rs',min:15,max:120,step:1,v:g.dist,on:onG('dist')},{label:'INCLINATION',txt:g.inc+'°',min:0,max:89,step:1,v:g.inc,on:onG('inc')},{label:'RAY TRACING RESOLUTION',txt:'L'+g.res+' · '+['','1/8','1/5','1/3','1/2','full'][g.res]+' px',min:1,max:5,step:1,v:g.res,on:onG('res')},{label:'VISUALIZATION RAYS',txt:String(g.rays),min:4,max:64,step:2,v:g.rays,on:onG('rays')}];
+    const grMap={IDLE:['READY',CC.cyan],MODIFIED:['PARAMETERS MODIFIED',CC.amber],TRACING:['TRACING '+Math.round(this.grP*100)+'%',CC.cyan],COMPLETE:['COMPLETE · ILLUSTRATIVE',CC.green]}[st.gr.status];
+    const grProg=st.gr.status==='TRACING'?Math.round(this.grP*100)+'%':st.gr.status==='COMPLETE'?'100%':'0%';
+    // sim
+    const rate=(v,u)=>sgn(v)+' '+(u||'%/step');
+    const massRow={label:'Total mass',txt:P.mass+' kg',w:pctW(P.mass/veh.lim*100),c:!cf.sandbox&&P.mass>veh.lim?CC.red:CC.cyan,rate:'Rocket limit '+(cf.sandbox?'∞':veh.lim+' kg')},budRow={label:'Mission budget',txt:cf.sandbox?'∞':'$'+f1(P.budgetLeft)+'M',w:cf.sandbox?'100%':pctW(P.budgetLeft/DF.budget*100),c:cf.sandbox?CC.cyan:P.budgetLeft/DF.budget>0.3?CC.green:P.budgetLeft/DF.budget>0.12?CC.amber:CC.red,rate:cf.sandbox?'Sandbox: unlimited':'−$'+f2(OPS_COST+ORB[P.orb]*0.6)+'M per step'};
+    const resList=[{label:'Fuel remaining',txt:f1(res.fuel)+'%',w:pctW(res.fuel),c:lvl(res.fuel),rate:rate(P.fuelR)},{label:'Battery power',txt:f1(res.battery)+'%',w:pctW(res.battery),c:lvl(res.battery),rate:rate(P.batR)},{label:'Shield integrity',txt:f1(res.shield)+'%',w:pctW(res.shield),c:lvl(res.shield),rate:rate(P.shR)},{label:'Chassis integrity',txt:f1(res.chassis)+'%',w:pctW(res.chassis),c:lvl(res.chassis),rate:rate(P.chR)},{label:'Operational nodes',txt:N(P.op),w:pctW(opPct),c:opPct>70?CC.green:opPct>50?CC.amber:CC.red,rate:'−'+f1(P.dmgR+P.lostR)+' nodes/step'},{label:'Data collected',txt:f1(res.data)+'%',w:pctW(res.data),c:CC.cyan,rate:rate(P.dataR)},{label:'Communication quality',txt:f1(res.comm)+'%',w:pctW(res.comm),c:lvl(res.comm+10),rate:'→ target '+f1(P.commT)+'%'},massRow,budRow];
+    const why=[{k:'FUEL',v:'−'+f2(-P.fuelR)+' = orbit corr. '+P.orb+' '+f2(ORB[P.orb])+' + station-keeping '+f2(P.orb==='Off'?0:P.keep)},{k:'BATTERY',v:sgn(P.batR)+' = RTG +0.28 − (bus 0.12 + instr '+f2(P.dInst)+' + comms '+f2(P.dComm)+' + shield '+f2(P.dSh)+' + priority '+f2(P.dPr)+(P.dTh?' + thermal 0.10':'')+')'},{k:'SHIELD',v:'−'+f2(-P.shR)+' = 0.03 + E×0.002 ('+f2(P.rad*0.002)+') + excess×0.04 ('+f2(P.excess*0.04)+')'+(P.thX?' + thermal '+f2(P.thX):'')},{k:'CHASSIS',v:'−'+f2(-P.chR)+' = 0.02 + max(0, S−25)×0.03'},{k:'DATA',v:'+'+f2(P.dataR)+' = 1.25 × power '+f2(p.split/60)+' × priority '+PRIO[p.prio]+' × √(6/r) '+f2(P.prox)+' × nodes '+f2(P.opFrac)+' × comms '+f2(P.commF)}];
+    const simSliders=[{label:'OBSERVATION DISTANCE',txt:rText,min:1.05,max:20,step:0.05,v:p.r,on:onP('r'),note:repoNote},{label:'RADIATION PROTECTION LEVEL',txt:String(p.shieldLvl),min:0,max:100,step:1,v:p.shieldLvl,on:onP('shieldLvl'),note:'Exposure '+f1(P.rad)+' · higher protection draws '+f2(P.dSh)+'%/step power'},{label:'POWER ALLOCATION · INSTRUMENTS / COMMS',txt:p.split+' / '+(100-p.split),min:10,max:90,step:1,v:p.split,on:onP('split'),note:'Instruments drive data rate; comms drive link quality'},{label:'OBSERVATION DURATION',txt:p.duration+' h',min:24,max:240,step:6,v:p.duration,on:onP('duration'),note:'Window ends at T+'+p.duration+'h · must exceed elapsed time'}];
+    const seg=(cur,v,set)=>({label:v,set,bg:cur===v?CC.cyan:'transparent',color:cur===v?'#080D17':CC.muted});
+    const prioOpts=['Low','Balanced','High'].map(v=>seg(p.prio,v,()=>this.setP('prio',v)));
+    const orbOpts=ORBL.map(v=>seg(p.orb,v,()=>this.setP('orb',v)));
+    const orbNote=p.orb==='Off'?(p.r<3?'No correction below 3 Rs: rapid node loss to orbital decay.':'No correction: slow drift damages nodes and degrades links.'):'Burns '+f2(ORB[p.orb])+'%/step'+(p.r<3?' + '+f2(P.keep)+' station-keeping':'');
+    const stepsNeeded=P.dataR>0?(100-res.data)/P.dataR:Infinity;const etaT=st.step+stepsNeeded;
+    const eta=res.data>=100?{text:'Dataset complete.',c:CC.green}:!isFinite(stepsNeeded)?{text:'No data being collected.',c:CC.red}:{text:'Projected completion T+'+Math.ceil(etaT)+'h · window T+'+p.duration+'h · '+(etaT<=p.duration?'ON TRACK':'SHORTFALL '+f1(100-res.data-P.dataR*(p.duration-st.step))+'%'),c:etaT<=p.duration?CC.green:CC.amber};
+    const alerts=[];
+    if(P.excess>0)alerts.push({sev:'RADIATION',text:'Exposure above protection limit by '+f1(P.excess),c:P.excess>20?CC.red:CC.amber});
+    if(P.stress>25)alerts.push({sev:'STRUCTURAL',text:'Stress index '+f1(P.stress)+' over tolerance',c:P.stress>45?CC.red:CC.amber});
+    if(p.r<3)alerts.push({sev:'ORBIT',text:'Inside 3 Rs · station-keeping required',c:CC.amber});
+    if(res.fuel<25)alerts.push({sev:'FUEL',text:'Propellant '+f1(res.fuel)+'%',c:res.fuel<10?CC.red:CC.amber});
+    if(res.battery<25)alerts.push({sev:'POWER',text:'Battery '+f1(res.battery)+'%'+(res.battery<15?' · nodes entering standby':''),c:res.battery<15?CC.red:CC.amber});
+    if(res.comm<50)alerts.push({sev:'COMMS',text:'Link quality '+f1(res.comm)+'%',c:CC.amber});
+    if(eta.c!==CC.green&&res.data<100&&started)alerts.push({sev:'SCIENCE',text:eta.text,c:CC.amber});
+    if(!alerts.length)alerts.push({sev:'NOMINAL',text:'All systems within modeled limits.',c:CC.green});
+    alerts.forEach(a=>a.b=a.c===CC.red?'rgba(255,92,100,0.45)':a.c===CC.amber?'rgba(255,181,71,0.4)':'rgba(56,217,150,0.35)');
+    // analytics
+    const H=st.history,last=H[H.length-1];
+    const perf=[{label:'MISSION RESULT',v:st.outcome?(st.outcome.success?'SUCCESS':'FAILURE'):'IN PROGRESS',c:st.outcome?(st.outcome.success?CC.green:CC.red):CC.amber},{label:'TOTAL DURATION',v:st.step+' h',c:CC.text},{label:'SCIENCE DATA',v:f1(res.data)+'%',c:CC.cyan},{label:'OPERATIONAL NODES',v:f1(opPct)+'%',c:CC.text},{label:'MISSION SCORE',v:st.outcome?String(st.outcome.score):'—',c:CC.text}];
+    const aRes=[{key:'a-fuel',title:'FUEL CONSUMPTION',last:f1(last.fuel)+'%'},{key:'a-bat',title:'BATTERY USAGE',last:f1(last.battery)+'%'},{key:'a-shield',title:'SHIELD INTEGRITY',last:f1(last.shield)+'%'},{key:'a-chassis',title:'STRUCTURAL INTEGRITY',last:f1(last.chassis)+'%'}];
+    const aSci=[{key:'a-dil',title:'TIME DILATION dτ/dt',last:last.dil.toFixed(4)},{key:'a-r',title:'OBSERVATION DISTANCE (Rs)',last:f2(last.r)},{key:'a-rad',title:'RADIATION EXPOSURE',last:f1(last.rad)},{key:'a-stress',title:'TIDAL STRESS INDEX',last:f1(last.stress)}];
+    const histRows=[];st.events.forEach(e=>histRows.push({t:'T+'+e.step+'h',type:e.code+' '+e.severity,c:e.severity==='CRITICAL'?CC.red:CC.amber,ev:e.title,dec:e.decision||'Pending',delta:e.delta||'—'}));
+    st.log.filter(l=>l.type==='crit').forEach(l=>histRows.push({t:'T+'+l.step+'h',type:'FAILURE',c:CC.red,ev:l.text,dec:'—',delta:'—'}));
+    histRows.sort((a,b)=>parseInt(a.t.slice(2))-parseInt(b.t.slice(2)));
+    // event modal
+    let ev={code:'',step:0,title:'',severity:'',cause:'',affected:'',plain:'',crewNote:'',c:CC.amber,choices:[]};
+    if(st.active){const a=st.active;ev={...a,c:a.severity==='CRITICAL'?CC.red:CC.amber,plain:EVX[a.code].plain,crewNote:cf.team?'Team mode: each crew role has a favourite option (shown below).':'Solo mode: you decide.',choices:EV[a.code].choices.map((c,i)=>({label:c.label,fx:c.fx,why:EVX[a.code].why[i],advice:cf.team?'Crew backing: '+(act.filter(k=>EVX[a.code].by[i].includes(k)).map(k=>ROLES[k].short).join(', ')||'none'):'',pick:()=>this.decide(i)}))};}
+    const out=st.outcome||{success:false,failure:false,stats:[],objectives:[],critical:[],analysis:[],breakdown:'',reason:'',step:0,score:0,rating:''};
+    const sgb=(on)=>({bg:on?CC.cyan:'transparent',color:on?'#080D17':CC.muted});
+    const card=(on)=>({bg:on?'rgba(85,221,224,0.08)':'#0B1220',border:on?CC.cyan:'#1B283B'});
+    const act=Object.keys(ROLES).filter(k=>cf.crew[k]);
+    const over=!cf.sandbox&&P.mass>veh.lim;
+    const lowA=P.budgetLeft/DF.budget;
+    const resGauges=[{key:'g-fuel',label:'FUEL',v:f1(res.fuel),unit:'%',c:lvl(res.fuel),tip:'Fuel used for moving and keeping position.'},{key:'g-bat',label:'BATTERY',v:f1(res.battery),unit:'%',c:lvl(res.battery),tip:'Power for instruments, radio and shielding.'},{key:'g-data',label:'DATA',v:f1(res.data),unit:'% COLLECTED',c:CC.cyan,tip:'Reach 100% to win.'},{key:'g-comm',label:'COMMS',v:f1(res.comm),unit:'% SIGNAL',c:lvl(res.comm+10),tip:'Strength of the radio link back to Earth.'},{key:'g-mass',label:'TOTAL MASS',v:String(P.mass),unit:'KG',c:over?CC.red:CC.text,tip:'Probe weight. It must fit under the rocket limit.'},{key:'g-bud',label:'BUDGET',v:cf.sandbox?'∞':'$'+Math.round(P.budgetLeft),unit:'M LEFT',c:cf.sandbox?CC.cyan:lowA>0.3?CC.green:lowA>0.12?CC.amber:CC.red,tip:'Money left after setup and running costs.'}];
+    const scenarios=Object.keys(SCEN).map(k=>({title:SCEN[k].title,desc:SCEN[k].desc,goal:'Goal: '+SCEN[k].goal,pick:()=>this.setCfg('scen',k),...card(cf.scen===k)}));
+    const orbitOpts=Object.keys(ORBITS).map(k=>({label:ORBITS[k].label,sub:ORBITS[k].r+' Rs · $'+ORBITS[k].cost+'M',tip:ORBITS[k].tip,set:()=>this.setCfg('orbit',k),...sgb(cf.orbit===k)}));
+    const vehicles=Object.keys(VEH).map(k=>({name:VEH[k].name,sub:'Up to '+VEH[k].lim+' kg · $'+VEH[k].cost+'M',tip:'A bigger rocket lifts more weight but costs more.',pick:()=>this.setCfg('veh',k),...card(cf.veh===k)}));
+    const partRows=PK.map(k=>{const pr=PARTS[k];return{label:pr.label,tip:pr.tip,aLabel:pr.a.n,bLabel:pr.b.n,setA:()=>this.setCfg('part','a',k),setB:()=>this.setCfg('part','b',k),aBg:sgb(cf.parts[k]==='a').bg,aCol:sgb(cf.parts[k]==='a').color,bBg:sgb(cf.parts[k]==='b').bg,bCol:sgb(cf.parts[k]==='b').color,fx:pr.b.n+': '+BEN[k]+' · +'+(pr.b.mass-pr.a.mass)+' kg · +'+pr.b.pw.toFixed(2)+' power/hr · +$'+pr.b.cost+'M'};});
+    const payPct=cl(P.mass/veh.lim*100,0,100);const payC=over?CC.red:payPct>85?CC.amber:CC.green;
+    const setupDone=setupCost(cf);
+    const crew=Object.keys(ROLES).map(k=>({name:ROLES[k].name,pri:PRIS[cf.votes[k]],toggle:()=>this.toggleCrew(k),bg:cf.crew[k]?'rgba(85,221,224,0.08)':'transparent',border:cf.crew[k]?'#2F4A63':'#1B283B',color:cf.crew[k]?CC.text:'#4E6177'}));
+    const cnt={data:0,safety:0,budget:0,comms:0};act.forEach(k=>cnt[cf.votes[k]]++);const nA=act.length||1,topShare=Math.max(...Object.values(cnt))/nA;
+    const voteRows=act.map(k=>({role:ROLES[k].name,opts:Object.keys(PRIS).map(q=>({label:PRIS[q],set:()=>this.castVote(k,q),...sgb(cf.votes[k]===q)}))}));
+    const tally=Object.keys(PRIS).map(q=>({label:PRIS[q],n:cnt[q],w:(cnt[q]/nA*100)+'%'}));
+    const voteEffect=act.length<2?'One crew member: no conflict, no team bonus.':(topShare>=0.5?'Aligned crew: +50 points. ':'Split crew: −50 points. ')+'Each priority also adds points for how well it turns out: 1 vote for data adds '+(cnt.data/nA*3).toFixed(1)+' points per 1% of data.';
+    const curRun=this.runOf(st,P);const ranked=st.runs.filter(r=>!r.sandbox).sort((x,y)=>y.score-x.score);
+    const board=ranked.concat(st.runs.filter(r=>r.sandbox)).map(r=>{const on=st.cmp.includes(r.id);return{rank:r.sandbox?'—':String(ranked.indexOf(r)+1),name:r.name,mode:r.diff+' · '+(r.team?'Team':'Solo')+(r.sandbox?' · Sandbox':''),budget:r.sandbox?'∞':'$'+r.budget+'M',mass:r.mass+' kg',data:r.data+'%',score:String(r.score),result:r.result,c:r.result==='SUCCESS'?CC.green:r.result==='FAILURE'?CC.red:CC.amber,toggle:()=>this.setState(s=>({cmp:s.cmp.includes(r.id)?s.cmp.filter(x=>x!==r.id):[...s.cmp,r.id].slice(-3)})),label:on?'SELECTED':'COMPARE',bd:on?CC.cyan:'#2A3B52',bg:on?'rgba(85,221,224,0.1)':'transparent',col:on?CC.cyan:CC.muted};});
+    const sel=st.cmp.map(id=>st.runs.find(r=>r.id===id)).filter(Boolean);const cols=[{title:'CURRENT RUN',c:CC.cyan,run:curRun}].concat(sel.map(r=>({title:r.name,c:CC.text,run:r})));
+    const bst={budget:Math.min(...cols.map(x=>x.run.sandbox?Infinity:x.run.budget)),mass:Math.min(...cols.map(x=>x.run.mass)),data:Math.max(...cols.map(x=>x.run.data)),score:Math.max(...cols.map(x=>x.run.score))};
+    const cell=(v,best)=>({v,c:best&&cols.length>1?CC.green:CC.text});
+    const cmpCols=cols.map(x=>{const r=x.run;return{title:x.title,c:x.c,cells:[{v:r.result,c:r.result==='SUCCESS'?CC.green:r.result==='FAILURE'?CC.red:CC.amber},cell(r.diff+(r.sandbox?' · Sandbox':''),false),cell(r.scen,false),cell(r.veh+' · '+r.orbit,false),cell(r.sandbox?'∞':'$'+r.budget+'M',!r.sandbox&&r.budget===bst.budget),cell(r.mass+' kg',r.mass===bst.mass),cell(r.data+'%',r.data===bst.data),cell(String(r.score),r.score===bst.score)]};});
+    const cmpLabels=['RESULT','DIFFICULTY','SCENARIO','ROCKET · ORBIT','BUDGET USED','MASS','DATA','SCORE'];
+    const gi=st.gstep;
+    const infoCur={show:!!INFO[st.screen],url:INFO[st.screen]||'',open:st.info};
+    const XT={
+      cfg:cf,infoCur,infoOn:()=>this.setState({info:true}),infoOff:()=>this.setState({info:false}),infoToggle:()=>this.setState({info:!st.info}),
+      diffOpts:Object.keys(DIFF).map(k=>({label:DIFF[k].label,tip:DIFF[k].tip,set:()=>this.setCfg('diff',k),...sgb(cf.diff===k)})),
+      modeOpts:[['SOLO',false,'Play alone and make every decision yourself.'],['TEAM',true,'Up to 4 crew roles with competing priorities. The team votes before launch and during events.']].map(([l,v,t])=>({label:l,tip:t,set:()=>this.setTeam(v),...sgb(cf.team===v)})),
+      sbText:cf.sandbox?'ON':'OFF',sbColor:cf.sandbox?CC.amber:CC.muted,sbBorder:cf.sandbox?'rgba(255,181,71,0.6)':'#2A3B52',toggleSandbox:()=>this.setCfg('sandbox',!cf.sandbox),
+      crewText:cf.team?act.length+' of 4 crew active':'Solo commander',crew,openVote:()=>this.setState({voteOpen:'edit'}),
+      openGuide:()=>this.setState({guide:true,gstep:0}),
+      footText:'BH-5000 · RUN '+st.mission+' · '+DF.label+' · '+(cf.team?'TEAM':'SOLO')+(cf.sandbox?' · SANDBOX':'')+' · '+SCEN[cf.scen].title,
+      openSources:()=>this.setState({sources:true}),closeSources:()=>this.setState({sources:false}),sourcesOpen:st.sources,sources:SRC.map(([label,url])=>({label,url})),
+      guideOpen:st.guide,gstepN:gi+1,gTitle:GUIDE[gi][0],gText:GUIDE[gi][1],g1:gi===0,g2:gi===1,g3:gi===2,gNext:gi===2?'START PLAYING':'NEXT',gDots:[0,1,2].map(i=>({c:i===gi?CC.cyan:'#2A3B52'})),
+      closeGuide:()=>{try{localStorage.setItem('bh5000_guide_seen','1');}catch(e){}this.setState({guide:false});},
+      guideBack:()=>this.setState({gstep:Math.max(0,gi-1)}),guideNext:()=>{if(gi<2)this.setState({gstep:gi+1});else{try{localStorage.setItem('bh5000_guide_seen','1');}catch(e){}this.setState({guide:false});}},
+      toasts:st.toasts.map(t=>({text:t.text,close:()=>this.setState(s=>({toasts:s.toasts.filter(x=>x.id!==t.id)}))})),
+      setupOpen:st.setupOpen,toggleSetup:()=>this.setState({setupOpen:!st.setupOpen}),setupChip:started?'LOCKED AFTER LAUNCH':'EDITABLE',setupChipC:started?CC.amber:CC.green,setupToggle:st.setupOpen?'HIDE ▲':'SHOW ▼',
+      resGauges,scenarios,orbitOpts,vehicles,partRows,over,overText:'Too heavy: your probe weighs '+P.mass+' kg but the '+veh.name+' rocket lifts only '+veh.lim+' kg. Pick a bigger rocket or choose lighter parts.',payTxt:P.mass+' / '+(cf.sandbox?'∞':veh.lim+' kg'),payW:payPct+'%',payC,
+      costLine:cf.sandbox?'Sandbox: budget, fuel and payload are unlimited.':'Setup cost $'+setupDone+'M of $'+DF.budget+'M · running cost about $'+f2(OPS_COST+ORB[P.orb]*0.6)+'M per hour · left after setup $'+(DF.budget-setupDone)+'M',
+      voteOpen:!!st.voteOpen,voteBtn:st.voteOpen==='launch'?'CONFIRM & LAUNCH':'SAVE VOTE',voteRows,tally,voteEffect,closeVote:()=>this.setState({voteOpen:false}),confirmVote:()=>{if(st.voteOpen==='launch')this.launch();else this.setState({voteOpen:false});},
+      saveRun:()=>this.saveRun(),saveMsg:st.saveMsg,board,noBoard:!board.length,cmpCols,cmpLabels
+    };
+    const dl=(name,text,type)=>{const b=new Blob([text],{type});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);};
+    return{
+      ...XT,is:{overview:st.screen==='overview',swarm:st.screen==='swarm',td:st.screen==='td',env:st.screen==='env',grrt:st.screen==='grrt',sim:st.screen==='sim',analytics:st.screen==='analytics',outcome:st.screen==='outcome'&&!!st.outcome},
+      cv:this.cv,p,statusText,statusColor,simDate,met:'T+ '+hms(st.step),healthText:health>50?'NOMINAL':health>25?'CAUTION':'CRITICAL',healthColor:lvl(health),
+      ops:{start:o(can.start),pause:o(can.pause),resume:o(can.resume),step:o(can.step),reset:o(can.reset),cfg:o(!started),run:o(st.gr.status!=='TRACING')},
+      start:this.start,pause:this.pause,resume:this.resume,stepOnce:this.stepOnce,reset:this.reset,speeds,nav,nav2,missionNo:st.mission,
+      massText,rsText,rText,extText:N(P.ext),opText:N(P.op),progressText,
+      markersDown:()=>this.setP('markers',Math.max(0,p.markers-4)),markersUp:()=>this.setP('markers',Math.min(60,p.markers+4)),
+      refClock:hms(st.step),probeClock:hms(st.probeT),dilText:P.dil.toFixed(6),clockDiff:'−'+f2(st.step-st.probeT)+' h',dilFormula:'√(1 − 1/'+f2(p.r)+') = '+P.dil.toFixed(5),onR:onP('r'),repoNote,
+      envBars,goEnv:go('env'),goGrrt:go('grrt'),swarmCounts,swarmSeg,logShort,logLong,
+      swarmCards,zoomIn:()=>this.setState({zoom:Math.min(6,st.zoom*1.4)}),zoomOut:()=>this.setState({zoom:Math.max(0.6,st.zoom/1.4)}),zoomText:Math.round(st.zoom*100)+'%',
+      search:st.search,searchMsg:st.searchMsg,onSearch:e=>this.setState({search:e.target.value}),onSearchKey:e=>{if(e.key==='Enter')this.doSearch();},doSearch:()=>this.doSearch(),
+      layerChips,filterChips,swarmClick:e=>{const rc=e.currentTarget.getBoundingClientRect(),x=e.clientX-rc.left,y=e.clientY-rc.top;let best=null,bd=196;for(const q of this.swarmOut.pts){const d=(q.x-x)**2+(q.y-y)**2;if(d<bd){bd=d;best=q.id;}}if(best)this.setState({sel:best,searchMsg:''});},
+      hasSel,selInfo,
+      massLog:Math.log10(p.mass),onMass:onP('mass',v=>Math.pow(10,v)),massLocked:started,massNote:started?'Locked during an active mission. Reset to change.':'Log scale · 10 to 10¹⁰ M☉',
+      refT:st.refT,refTText:f1(st.refT)+' h',onRefT:e=>this.setState({refT:+e.target.value}),tdRows,tdRefClock:hms(st.refT),tdProbeClock:hms(tdProbe),tdBarW:(P.dil*100).toFixed(2)+'%',tdDiff:hms(tdD),tdExplain,
+      envSliders:tipify(envSliders),safe,moveSafe:()=>{if(p.r<safe.go-0.05)this.setP('r',+safe.go.toFixed(2));},gauges,envWarn,envCharts,tidalPhys:fmtE(P.tidal)+' s⁻²',
+      split:st.split,splitText:Math.round(st.split*100)+'%',onSplit:e=>this.setState({split:+e.target.value}),gSliders:tipify(gSliders),runViz:()=>{if(st.gr.status==='TRACING')return;this.grP=0;this.setState({gr:{...st.gr,status:'TRACING'}});},
+      grStatus:grMap[0],grStatusC:grMap[1],grProg,runs:st.gr.runs,noRuns:!st.gr.runs.length,gScale:'1 Rs = '+fmtE(2.953*Math.pow(10,g.mass))+' km',
+      randomText:p.random?'RANDOM EVENT MODE · ON (SEEDED)':'RANDOM EVENT MODE · OFF (DETERMINISTIC)',randomColor:p.random?CC.amber:CC.muted,randomBorder:p.random?'rgba(255,181,71,0.6)':'#2A3B52',toggleRandom:()=>this.setP('random',!p.random),
+      resList,why,simSliders:tipify(simSliders),prioOpts,orbOpts,orbNote,dataText:f1(res.data)+'%',dataW:pctW(res.data),eta,alerts,
+      perf,aRes,aSci,histRows,noHist:!histRows.length,histLen:H.length-1,
+      hasEvent:!!st.active,ev,outcome:out,
+      goAnalytics:go('analytics'),nextMission:()=>this.resetTo(st.mission+1,'sim'),restart:()=>this.resetTo(st.mission,'sim'),mainMenu:()=>this.resetTo(st.mission,'overview'),
+      exportCSV:()=>{const cols=['t','fuel','battery','shield','chassis','data','comm','op','dmg','lost','r','dil','rad','stress','temp','lvl'];dl('BH-5000_run'+st.mission+'_telemetry.csv',[cols.join(',')].concat(H.map(h=>cols.map(c=>typeof h[c]==='number'?+h[c].toFixed(6):h[c]).join(','))).join('\n'),'text/csv');},
+      exportReport:()=>{const L=['BLACK HOLE MISSION CONTROL · MISSION REPORT','Mission BH-5000 · run '+st.mission,'Result: '+(st.outcome?(st.outcome.success?'SUCCESS':'FAILURE — '+st.outcome.reason):'IN PROGRESS'),'Duration: '+st.step+' h','Data collected: '+f1(res.data)+'%','Fuel: '+f1(res.fuel)+'% · Battery: '+f1(res.battery)+'% · Shield: '+f1(res.shield)+'% · Chassis: '+f1(res.chassis)+'%','Operational nodes: '+N(P.op)+' / '+N(P.ext),'Score: '+(st.outcome?st.outcome.score:'—'),'','PARAMETERS',JSON.stringify(p),'','EVENT LOG'].concat(st.log.map(l=>'T+'+l.step+'h ['+l.type.toUpperCase()+'] '+l.text));L.push('','Educational simulation. Environmental values are simulated assumptions.');dl('BH-5000_run'+st.mission+'_report.txt',L.join('\n'),'text/plain');}
+    };}
+  toast(key,text){const id=Date.now()+Math.random();this.setState(s=>({toasts:[...s.toasts.filter(t=>t.key!==key),{id,key,text}].slice(-3)}));clearTimeout(this.tm[key]);this.tm[key]=setTimeout(()=>this.setState(s=>({toasts:s.toasts.filter(t=>t.key!==key)})),8000);}
+  whyP(k,a,b){const Pa=phys(a),Pb=phys(b),f=(x,d)=>x.toFixed(d==null?0:d);let t=null;
+    if(k==='r')t=(b.p.r<a.p.r?'Moving closer':'Moving farther')+' to '+f(b.p.r,2)+' Rs: clocks run at '+f(Pb.dil,2)+'x Earth speed, radiation goes '+f(Pa.rad)+' → '+f(Pb.rad)+' and body stretching '+f(Pa.stress)+' → '+f(Pb.stress)+' (safe below 25). Closer gives more data but more wear.';
+    else if(k==='shieldLvl')t='Protection '+a.p.shieldLvl+' → '+b.p.shieldLvl+': shield wear drops from '+f(-Pa.shR,2)+'% to '+f(-Pb.shR,2)+'% per hour, but battery use changes '+f(Pa.dSh,2)+' → '+f(Pb.dSh,2)+'% per hour.';
+    else if(k==='split')t='More power to '+(b.p.split>a.p.split?'instruments':'the radio')+': data rate '+f(Pa.dataR,2)+' → '+f(Pb.dataR,2)+'% per hour, signal target '+f(Pa.commT)+' → '+f(Pb.commT)+'%.';
+    else if(k==='duration')t='Window set to '+b.p.duration+' h. More time helps you finish the data, but you spend more money and stay exposed longer.';
+    else if(k==='radI')t='Stronger radiation (simulated): exposure '+f(Pa.rad)+' → '+f(Pb.rad)+' against your protection limit of '+Pb.lim+'.';
+    else if(k==='temp')t='Hotter environment: modeled temperature '+f(Pa.tempK)+' → '+f(Pb.tempK)+' K. Above 450 K the shield wears faster.';
+    else if(k==='tidalMult')t='Stronger stretching: stress index '+f(Pa.stress)+' → '+f(Pb.stress)+'. Above 25 the probe body starts to wear.';
+    else if(k==='prio')t='Data priority '+b.p.prio+': data rate '+f(Pa.dataR,2)+' → '+f(Pb.dataR,2)+'% per hour, battery use '+f(Pa.drain,2)+' → '+f(Pb.drain,2)+'% per hour.';
+    else if(k==='orb')t='Orbit correction '+b.p.orb+': fuel burn '+f(-Pa.fuelR,2)+' → '+f(-Pb.fuelR,2)+'% per hour. Corrections keep nodes in place; skipping them saves fuel but nodes drift.';
+    else if(k==='mass')t='Heavier black hole: its edge (Rs) grows, so the same distance in Rs is farther away in km. Tidal stretching at a given Rs gets weaker.';
+    else if(k==='markers')t='Inside-horizon markers are only scenario markers. They do not send data or change resources.';
+    else if(k==='random')t=b.p.random?'Random events are on. A seeded radiation surge may appear and is logged.':'Random events are off, so runs repeat exactly.';
+    if(t)this.toast('p-'+k,t);}
+  setCfg(k,v,part){const st=this.state;if(st.status!=='READY'||st.outcome)return;let cfg={...st.cfg,[k]:v},upd={};
+    if(k==='part')cfg={...st.cfg,parts:{...st.cfg.parts,[part]:v}};
+    if(k==='orbit')upd.p={...st.p,r:ORBITS[v].r};
+    upd.cfg=cfg;const nx={...st,...upd};upd.history=[snap(nx)];this.setState(upd);
+    const Pa=phys(st),Pb=phys(nx),f=(x,d)=>x.toFixed(d==null?0:d),fl=Pb.mass>VEH[cfg.veh].lim&&!cfg.sandbox?' Warning: too heavy for your rocket ('+VEH[cfg.veh].lim+' kg).':'';let t='';
+    if(k==='part'){const pr=PARTS[part],nw=pr[v],od=pr[st.cfg.parts[part]],dm=Pb.mass-Pa.mass,dc=nw.cost-od.cost;t=nw.n+' '+pr.label.toLowerCase()+': '+(v==='b'?BEN[part]:'back to the lighter, cheaper option')+'. Cost: '+(dm>=0?'+':'')+dm+' kg (total '+Pb.mass+' kg), '+((Pb.dParts-Pa.dParts)>=0?'+':'')+f(Pb.dParts-Pa.dParts,2)+' power per hour, '+(dc>=0?'+$':'−$')+Math.abs(dc)+'M. Fuel burn changes by '+f((Pb.mf/Pa.mf-1)*100,1)+'% because of the weight.'+fl;}
+    else if(k==='veh')t=VEH[v].name+' rocket lifts up to '+VEH[v].lim+' kg and costs $'+VEH[v].cost+'M. Your probe weighs '+Pb.mass+' kg.'+(fl||' It fits.');
+    else if(k==='orbit')t=ORBITS[v].label+' orbit at '+ORBITS[v].r+' Rs ($'+ORBITS[v].cost+'M): radiation '+f(Pa.rad)+' → '+f(Pb.rad)+', stretching '+f(Pa.stress)+' → '+f(Pb.stress)+', clocks at '+f(Pb.dil,2)+'x. Closer orbits give more data and more danger.';
+    else if(k==='scen')t=SCEN[v].title+'. '+SCEN[v].goal+' Pick the orbit and parts that fit this goal.';
+    else if(k==='diff')t=DIFF[v].label+': wear ×'+DIFF[v].wear+', budget $'+DIFF[v].budget+'M, data ×'+DIFF[v].data+', score ×'+DIFF[v].score+'.';
+    else if(k==='sandbox')t=v?'Sandbox on: unlimited budget, fuel and rocket weight. Use it to experiment. Scores are not ranked.':'Sandbox off: budget, fuel and rocket limits apply again.';
+    if(t)this.toast('c-'+k+(part||''),t);}
+  setTeam(v){const st=this.state;if(st.status!=='READY'||st.outcome)return;this.setState({cfg:{...st.cfg,team:v}});this.toast('c-team',v?'Team mode: choose crew roles. Each role favours a different priority, so you vote before launch and during events. Agreement earns bonus points; a split costs points.':'Solo mode: you make every decision alone.');}
+  toggleCrew(k){const st=this.state;if(st.status!=='READY'||st.outcome)return;const crew={...st.cfg.crew,[k]:!st.cfg.crew[k]};if(!Object.values(crew).some(Boolean))return;this.setState({cfg:{...st.cfg,crew}});}
+  castVote(role,pri){const st=this.state;this.setState({cfg:{...st.cfg,votes:{...st.cfg.votes,[role]:pri}}});}
+  runOf(st,P){const c=st.cfg;return{diff:DIFF[c.diff].label,sandbox:c.sandbox,team:c.team,scen:SCEN[c.scen].title,veh:VEH[c.veh].name,orbit:ORBITS[c.orbit].label,budget:+(setupCost(c)+st.spent).toFixed(0),mass:P.mass,data:+st.res.data.toFixed(1),score:st.outcome?st.outcome.score:this.scoreOf(st,P,false).score,result:st.outcome?(st.outcome.success?'SUCCESS':'FAILURE'):'IN PROGRESS',step:st.step};}
+  saveRun(){const st=this.state,P=phys(st);const run={...this.runOf(st,P),id:Date.now(),name:'Design '+(st.runs.length+1)};const runs=[...st.runs,run];try{localStorage.setItem('bh5000_runs',JSON.stringify(runs));}catch(e){}this.setState({runs,saveMsg:'Saved as '+run.name+'. Select it under COMPARE.'});}
+  doSearch(){const m=String(this.state.search).match(/\d+/);if(!m)return this.setState({searchMsg:'Enter an ID, e.g. BH-1207'});const id=parseInt(m[0],10);if(id<1||id>5000)return this.setState({searchMsg:'IDs range BH-0001 to BH-5000'});this.setState({sel:id,searchMsg:'Located BH-'+pad4(id)});}
+}
+</script>
+</body>
+</html>
