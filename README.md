@@ -21,8 +21,8 @@ An interactive, educational mission-design simulator built for the NASA Space Ap
 ### Installation & Execution
 ```bash
 # Clone the repository
-git clone https://github.com/ahtishamu414-crypto/Beyond-the-Black-Hole.git
-cd Beyond-the-Black-Hole
+git clone https://github.com/ahtishamu414-crypto/Inside-the-Black-Hole.git
+cd Inside-the-Black-Hole
 
 # Install dependencies
 npm install
@@ -70,6 +70,8 @@ Beyond-the-Black-Hole/
 │   │   ├── events.ts        # Decision trees, crew consensus modifiers, resource deltas
 │   │   ├── fresh.ts         # Initial state factory for runs
 │   │   └── sources.ts       # NASA educational references per screen
+│   ├── audio/               # Native Web Audio game simulator soundtrack & SFX engine
+│   │   └── soundManager.ts  # Procedural atmospheric synth, telemetry clock, alarm & fanfare
 │   ├── viz/                 # High-performance 2D Canvas rendering engines
 │   │   └── bhViz.ts         # Black hole accretion disk, 5k swarm map, GRRT ray optics
 │   ├── store/               # Centralized Zustand reactive state store
@@ -197,6 +199,24 @@ Beyond-the-Black-Hole/
 - **Stationary vs. Free-fall Distinction:** Time dilation formulas are labeled strictly for stationary observers at radius $r$, noting that infalling observers follow geodesic free-fall coordinates.
 - **ILLUSTRATIVE vs. COMPUTED:** Ray-traced accretion images are explicitly badged as `ILLUSTRATIVE · NOT COMPUTED`; only the photon geodesic trajectories in the side panel are numerically solved via RK4.
 - **SIMULATED ASSUMPTIONS:** All environmental hazards (magnetic field strength, disk temperature, radiation exposure) carry clear `SIMULATED ASSUMPTIONS` badges.
+
+---
+
+## Game Simulator Audio Engine (Soundtrack & SFX)
+
+Built natively on the **Web Audio API** with zero external sound files for instant loading, crisp fidelity, and reactive state modulation:
+- **Procedural Space Soundtrack (`soundManager.ts`)**:
+  - `AMBIENT`: Deep 55 Hz / 65 Hz cosmic sub-bass drone with resonant low-pass filter LFO breathing ($12.5\text{ s}$ cycles) and floating modal space pads ($Cm9$, $Ebmaj7$, $Abmaj7$, $Gsus4$).
+  - `RUNNING`: Synchronized high-tech telemetry pulse ($523\text{ Hz} - 1046\text{ Hz}$) advancing with the mission clock ($T+$ hours).
+  - `ALERT`: Tritone tension chord progression and dual-tone tactical sirens ($880\text{ Hz} \rightarrow 660\text{ Hz}$) when an anomaly event requires an immediate decision.
+  - `VICTORY`: Triumphant celestial fanfare and major harmonic pads celebrating a successful science return and high score.
+  - `FAILURE`: Resonant descending low-frequency tone on structural or radiation loss.
+- **Dynamic Sound Effects (SFX)**:
+  - Turbine spool and sub-bass rocket thrust ignition on launch.
+  - High-precision telemetry ticks on clock advance.
+  - Tactical decision resolution chimes and mechanical terminal clicks.
+- **Top Bar Controls**:
+  - One-click `[ 🔊 AUDIO ]` / `[ 🔇 MUTED ]` toggle in the top control bar with `localStorage` state persistence.
 
 ---
 
