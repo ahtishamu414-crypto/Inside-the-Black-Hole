@@ -32,7 +32,8 @@ export const Footer: React.FC = () => {
         gap: 16,
         padding: '0 16px',
         borderTop: '1px solid #1B283B',
-        background: '#0B1220',
+        background: 'rgba(11, 18, 32, 0.45)',
+        backdropFilter: 'blur(8px)',
         fontFamily: "'IBM Plex Mono', monospace",
         fontSize: 10.5,
         color: '#8FA3B8'

@@ -6,4 +6,5 @@ export * from './scoring';
 export * from './events';
 export * from './fresh';
 export * from './advance';
+export * from './starfield';
 

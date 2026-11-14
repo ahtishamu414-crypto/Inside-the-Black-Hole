@@ -61,7 +61,8 @@ export const Sidebar: React.FC = () => {
     <div
       style={{
         borderRight: '1px solid #1B283B',
-        background: '#0A101C',
+        background: 'rgba(10, 16, 28, 0.45)',
+        backdropFilter: 'blur(8px)',
         display: 'flex',
         flexDirection: 'column',
         padding: '14px 0',

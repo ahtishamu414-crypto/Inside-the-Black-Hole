@@ -12,6 +12,7 @@ import { EventModal } from './components/modals/EventModal';
 import { VoteModal } from './components/modals/VoteModal';
 import { GuideModal } from './components/modals/GuideModal';
 import { SourcesModal } from './components/modals/SourcesModal';
+import { SpaceBackground } from './components/common/SpaceBackground';
 
 import { OverviewScreen } from './screens/OverviewScreen';
 import { SwarmScreen } from './screens/SwarmScreen';
@@ -78,38 +79,42 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateRows: '56px 40px minmax(0, 1fr) 30px',
-        gridTemplateColumns: '216px minmax(0, 1fr)',
-        height: '100vh',
-        background: '#080D17',
-        color: '#E8F0FA',
-        fontFamily: "'IBM Plex Sans', system-ui, sans-serif",
-        fontSize: 13,
-      }}
-    >
-      {/* Top Status Bar */}
-      <TopBar />
-
-      {/* Game Bar */}
-      <GameBar />
-
-      {/* Sidebar */}
-      <Sidebar />
-
-      {/* Main Content Area */}
+    <>
+      <SpaceBackground />
       <div
         style={{
-          overflow: 'auto',
-          minHeight: 0,
-          backgroundColor: '#080D17',
-          backgroundImage:
-            'linear-gradient(rgba(85,221,224,0.022) 1px, transparent 1px), linear-gradient(90deg, rgba(85,221,224,0.022) 1px, transparent 1px)',
-          backgroundSize: '32px 32px',
+          display: 'grid',
+          gridTemplateRows: '56px 40px minmax(0, 1fr) 30px',
+          gridTemplateColumns: '216px minmax(0, 1fr)',
+          height: '100vh',
+          background: 'transparent',
+          position: 'relative',
+          zIndex: 1,
+          color: '#E8F0FA',
+          fontFamily: "'IBM Plex Sans', system-ui, sans-serif",
+          fontSize: 13,
         }}
       >
+        {/* Top Status Bar */}
+        <TopBar />
+
+        {/* Game Bar */}
+        <GameBar />
+
+        {/* Sidebar */}
+        <Sidebar />
+
+        {/* Main Content Area */}
+        <div
+          style={{
+            overflow: 'auto',
+            minHeight: 0,
+            backgroundColor: 'transparent',
+            backgroundImage:
+              'linear-gradient(rgba(85,221,224,0.022) 1px, transparent 1px), linear-gradient(90deg, rgba(85,221,224,0.022) 1px, transparent 1px)',
+            backgroundSize: '32px 32px',
+          }}
+        >
         <div
           style={{
             padding: '20px 24px 40px',
@@ -219,6 +224,7 @@ export const App: React.FC = () => {
       <SourcesModal />
       <ToastContainer />
     </div>
+    </>
   );
 };
 export default App;

@@ -50,7 +50,7 @@ export const VoteModal: React.FC = () => {
           maxWidth: '94vw',
           maxHeight: '92vh',
           overflow: 'auto',
-          background: '#101A2A',
+          background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)',
           border: '1px solid #2A3B52',
           borderTop: '3px solid #55DDE0',
           borderRadius: 4,
@@ -114,7 +114,7 @@ export const VoteModal: React.FC = () => {
 
         <div
           style={{
-            background: '#0B1220',
+            background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)',
             border: '1px solid #1B283B',
             borderRadius: 3,
             padding: 12,

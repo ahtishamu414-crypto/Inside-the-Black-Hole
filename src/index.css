@@ -7,7 +7,7 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: #080D17;
+  background: transparent;
   color: #E8F0FA;
   font-family: 'IBM Plex Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   height: 100%;
@@ -15,6 +15,51 @@ html, body {
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Glassmorphism theme: translucent panels and divs so live starfield and galaxy background shine through */
+div[style*="background: #101A2A"],
+div[style*="background:#101A2A"],
+div[style*="background: rgb(16, 26, 42)"],
+div[style*="background:rgb(16, 26, 42)"],
+div[style*="background: rgba(16, 26, 42"],
+div[style*="background:rgba(16, 26, 42"] {
+  background: rgba(16, 26, 42, 0.38) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+div[style*="background: #0B1220"],
+div[style*="background:#0B1220"],
+div[style*="background: rgb(11, 18, 32)"],
+div[style*="background:rgb(11, 18, 32)"],
+div[style*="background: rgba(11, 18, 32"],
+div[style*="background:rgba(11, 18, 32"] {
+  background: rgba(11, 18, 32, 0.32) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+div[style*="background: #0A101C"],
+div[style*="background:#0A101C"],
+div[style*="background: rgb(10, 16, 28)"],
+div[style*="background:rgb(10, 16, 28)"],
+div[style*="background: rgba(10, 16, 28"],
+div[style*="background:rgba(10, 16, 28"] {
+  background: rgba(10, 16, 28, 0.30) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+div[style*="background: #080D17"],
+div[style*="background:#080D17"],
+div[style*="background: rgb(8, 13, 23)"],
+div[style*="background:rgb(8, 13, 23)"],
+div[style*="background: rgba(8, 13, 23"],
+div[style*="background:rgba(8, 13, 23"] {
+  background: rgba(8, 13, 23, 0.25) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
 }
 
 #root {

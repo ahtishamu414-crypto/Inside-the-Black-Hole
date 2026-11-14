@@ -26,7 +26,7 @@ export const SourcesModal: React.FC = () => {
           maxWidth: '94vw',
           maxHeight: '92vh',
           overflow: 'auto',
-          background: '#101A2A',
+          background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)',
           border: '1px solid #2A3B52',
           borderTop: '3px solid #55DDE0',
           borderRadius: 4,

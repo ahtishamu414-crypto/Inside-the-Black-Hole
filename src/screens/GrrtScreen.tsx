@@ -145,7 +145,7 @@ export const GrrtScreen: React.FC = () => {
         {/* Left Container */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 0 }}>
           {/* Split Comparison Image Viewer */}
-          <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
             <div
               style={{
                 display: 'flex',
@@ -216,7 +216,7 @@ export const GrrtScreen: React.FC = () => {
 
           {/* Bottom Row: Left = Photon Paths RK4, Right = Visualization Runs */}
           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.6fr) minmax(0,1fr)', gap: 12 }}>
-            <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
               <div
                 style={{
                   display: 'flex',
@@ -243,7 +243,7 @@ export const GrrtScreen: React.FC = () => {
               </div>
             </div>
 
-            <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
               <div style={{ padding: '10px 14px', borderBottom: '1px solid #1B283B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
                 VISUALIZATION RUNS
               </div>
@@ -265,7 +265,7 @@ export const GrrtScreen: React.FC = () => {
         </div>
 
         {/* Right Sidebar: Render Parameters */}
-        <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column', alignSelf: 'start' }}>
+        <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column', alignSelf: 'start' }}>
           <div style={{ padding: '10px 14px', borderBottom: '1px solid #1B283B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
             RENDER PARAMETERS
           </div>

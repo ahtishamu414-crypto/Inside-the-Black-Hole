@@ -103,7 +103,7 @@ export const TimeDilationScreen: React.FC = () => {
         {/* Left Column */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {/* Parameters */}
-          <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
             <div style={{ padding: '10px 14px', borderBottom: '1px solid #1B283B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
               PARAMETERS
             </div>
@@ -162,7 +162,7 @@ export const TimeDilationScreen: React.FC = () => {
           </div>
 
           {/* Live Calculation Table */}
-          <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
             <div style={{ padding: '10px 14px', borderBottom: '1px solid #1B283B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
               LIVE CALCULATION
             </div>
@@ -181,7 +181,7 @@ export const TimeDilationScreen: React.FC = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 0 }}>
           {/* Top: Geometry + Reference Clocks */}
           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.3fr) minmax(0,1fr)', gap: 12 }}>
-            <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
               <div
                 style={{
                   display: 'flex',
@@ -205,7 +205,7 @@ export const TimeDilationScreen: React.FC = () => {
               </div>
             </div>
 
-            <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
               <div style={{ padding: '10px 14px', borderBottom: '1px solid #1B283B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
                 REFERENCE CLOCK COMPARISON
               </div>
@@ -249,7 +249,7 @@ export const TimeDilationScreen: React.FC = () => {
           </div>
 
           {/* Time Dilation Curve Chart */}
-          <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
             <div style={{ padding: '10px 14px', borderBottom: '1px solid #1B283B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
               TIME DILATION VS DISTANCE · dτ/dt(r)
             </div>
@@ -260,7 +260,7 @@ export const TimeDilationScreen: React.FC = () => {
 
           {/* Formula & Validity Warning */}
           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: 12 }}>
-            <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
                 FORMULA
                 <span style={{ fontSize: 9.5, padding: '2px 6px', border: '1px solid rgba(85,221,224,.5)', color: '#55DDE0', borderRadius: 2 }}>

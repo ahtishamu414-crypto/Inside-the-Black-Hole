@@ -27,7 +27,7 @@ export const OutcomeScreen: React.FC = () => {
         <div
           style={{
             width: 760,
-            background: '#101A2A',
+            background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)',
             border: '1px solid rgba(56,217,150,0.5)',
             borderTop: '3px solid #38D996',
             borderRadius: 4,
@@ -53,7 +53,7 @@ export const OutcomeScreen: React.FC = () => {
               <div
                 key={idx}
                 style={{
-                  background: '#0B1220',
+                  background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)',
                   border: '1px solid #1B283B',
                   borderRadius: 3,
                   padding: 12,
@@ -99,7 +99,7 @@ export const OutcomeScreen: React.FC = () => {
           {/* Post-Mission Analysis */}
           <div
             style={{
-              background: '#0B1220',
+              background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)',
               border: '1px solid #1B283B',
               borderRadius: 3,
               padding: '14px 16px',
@@ -200,7 +200,7 @@ export const OutcomeScreen: React.FC = () => {
         <div
           style={{
             width: 760,
-            background: '#101A2A',
+            background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)',
             border: '1px solid rgba(255,92,100,0.5)',
             borderTop: '3px solid #FF5C64',
             borderRadius: 4,
@@ -229,7 +229,7 @@ export const OutcomeScreen: React.FC = () => {
               <div
                 key={idx}
                 style={{
-                  background: '#0B1220',
+                  background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)',
                   border: '1px solid #1B283B',
                   borderRadius: 3,
                   padding: 12,
@@ -265,7 +265,7 @@ export const OutcomeScreen: React.FC = () => {
           {/* Post-Mission Analysis */}
           <div
             style={{
-              background: '#0B1220',
+              background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)',
               border: '1px solid #1B283B',
               borderRadius: 3,
               padding: '14px 16px',

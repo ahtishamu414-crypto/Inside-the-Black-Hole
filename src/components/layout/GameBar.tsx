@@ -9,6 +9,8 @@ export const GameBar: React.FC = () => {
   const setTeam = useMissionStore(s => s.setTeam);
   const openVote = useMissionStore(s => s.openVote);
   const openGuide = useMissionStore(s => s.openGuide);
+  const bgEnabled = useMissionStore(s => s.bgEnabled);
+  const toggleBg = useMissionStore(s => s.toggleBg);
 
   const cf = sim.cfg;
   const started = sim.status !== 'READY';
@@ -30,7 +32,8 @@ export const GameBar: React.FC = () => {
         gap: 14,
         padding: '0 16px',
         borderBottom: '1px solid #1B283B',
-        background: '#0A101C',
+        background: 'rgba(10, 16, 28, 0.45)',
+        backdropFilter: 'blur(8px)',
         minWidth: 0,
         overflow: 'hidden'
       }}
@@ -168,6 +171,26 @@ export const GameBar: React.FC = () => {
       </span>
 
       <div style={{ flex: 1 }} />
+
+      <button
+        title={bgEnabled ? 'Disable live starfield background (falls back to flat color)' : 'Enable live starfield background'}
+        onClick={toggleBg}
+        style={{
+          height: 28,
+          padding: '0 10px',
+          border: `1px solid ${bgEnabled ? '#55DDE0' : '#2A3B52'}`,
+          background: bgEnabled ? 'rgba(85,221,224,0.12)' : 'transparent',
+          color: bgEnabled ? '#55DDE0' : '#8FA3B8',
+          fontFamily: "'IBM Plex Mono', monospace",
+          fontSize: 10.5,
+          letterSpacing: '.04em',
+          borderRadius: 2,
+          cursor: 'pointer',
+          flexShrink: 0
+        }}
+      >
+        BG: {bgEnabled ? 'ON' : 'OFF'}
+      </button>
 
       <button
         onClick={openGuide}

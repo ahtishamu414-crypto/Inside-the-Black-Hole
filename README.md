@@ -1,4 +1,4 @@
-# Beyond the Black Hole: Mission Control (BH-5000)
+# Inside the Black Hole: Mission Control (BH-5000)
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue.svg)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-19.0-61dafb.svg)](https://react.dev/)
@@ -59,7 +59,7 @@ An automated walkthrough video demonstrating the entire system, visual effects, 
 The application is structured into a clean separation of concerns: pure physics simulation, canvas visualizers, reactive Zustand store, and responsive React components.
 
 ```
-Beyond-the-Black-Hole/
+Inside-the-Black-Hole/
 ├── src/
 │   ├── sim/                 # Pure TypeScript simulation engine (zero DOM dependencies)
 │   │   ├── constants.ts     # Physics constants, parts, vehicles, orbits, scenarios

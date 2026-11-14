@@ -34,7 +34,7 @@ export const EventModal: React.FC = () => {
       <div
         style={{
           width: 600,
-          background: '#101A2A',
+          background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)',
           border: `1px solid ${color}`,
           borderTop: `3px solid ${color}`,
           borderRadius: 4,
@@ -176,7 +176,7 @@ export const EventModal: React.FC = () => {
                   textAlign: 'left',
                   padding: '12px 14px',
                   border: '1px solid #2A3B52',
-                  background: '#0B1220',
+                  background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)',
                   color: '#E8F0FA',
                   borderRadius: 3,
                   cursor: 'pointer',

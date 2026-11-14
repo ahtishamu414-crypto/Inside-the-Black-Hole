@@ -418,7 +418,7 @@ export const SimulationScreen: React.FC = () => {
         {/* Left: 9 Resource Bars + Why Values Change */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {/* 9 Resource Bars */}
-          <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
             <div style={{ padding: '10px 14px', borderBottom: '1px solid #1B283B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
               RESOURCES
             </div>
@@ -443,7 +443,7 @@ export const SimulationScreen: React.FC = () => {
           </div>
 
           {/* Why Values Change */}
-          <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
             <div style={{ padding: '10px 14px', borderBottom: '1px solid #1B283B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
               WHY VALUES CHANGE
             </div>
@@ -458,7 +458,7 @@ export const SimulationScreen: React.FC = () => {
         </div>
 
         {/* Center: Live Swarm & Simulation Control Buttons */}
-        <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+        <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderBottom: '1px solid #1B283B', flexWrap: 'wrap' }}>
             <button
               onClick={start}
@@ -484,7 +484,7 @@ export const SimulationScreen: React.FC = () => {
                 height: 30,
                 padding: '0 12px',
                 border: '1px solid #2A3B52',
-                background: '#0B1220',
+                background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)',
                 color: '#E8F0FA',
                 fontFamily: "'IBM Plex Mono', monospace",
                 fontSize: 11,
@@ -501,7 +501,7 @@ export const SimulationScreen: React.FC = () => {
                 height: 30,
                 padding: '0 12px',
                 border: '1px solid #2A3B52',
-                background: '#0B1220',
+                background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)',
                 color: '#E8F0FA',
                 fontFamily: "'IBM Plex Mono', monospace",
                 fontSize: 11,
@@ -518,7 +518,7 @@ export const SimulationScreen: React.FC = () => {
                 height: 30,
                 padding: '0 12px',
                 border: '1px solid #2A3B52',
-                background: '#0B1220',
+                background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)',
                 color: '#E8F0FA',
                 fontFamily: "'IBM Plex Mono', monospace",
                 fontSize: 11,
@@ -535,7 +535,7 @@ export const SimulationScreen: React.FC = () => {
                 height: 30,
                 padding: '0 12px',
                 border: '1px solid #2A3B52',
-                background: '#0B1220',
+                background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)',
                 color: '#E8F0FA',
                 fontFamily: "'IBM Plex Mono', monospace",
                 fontSize: 11,
@@ -635,7 +635,7 @@ export const SimulationScreen: React.FC = () => {
         </div>
 
         {/* Right: Mission Controls */}
-        <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column', alignSelf: 'start' }}>
+        <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column', alignSelf: 'start' }}>
           <div style={{ padding: '10px 14px', borderBottom: '1px solid #1B283B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
             MISSION CONTROLS
           </div>
@@ -724,7 +724,7 @@ export const SimulationScreen: React.FC = () => {
       {/* Bottom 5 Panels */}
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr) minmax(0,0.9fr) minmax(0,1fr)', gap: 12 }}>
         {/* Mission Event Log */}
-        <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
           <div style={{ padding: '10px 14px', borderBottom: '1px solid #1B283B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
             MISSION EVENT LOG
           </div>
@@ -741,7 +741,7 @@ export const SimulationScreen: React.FC = () => {
         </div>
 
         {/* Resource Consumption Chart */}
-        <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
           <div style={{ padding: '10px 14px', borderBottom: '1px solid #1B283B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
             RESOURCE CONSUMPTION
           </div>
@@ -759,7 +759,7 @@ export const SimulationScreen: React.FC = () => {
         </div>
 
         {/* Satellite Status Chart */}
-        <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
           <div style={{ padding: '10px 14px', borderBottom: '1px solid #1B283B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
             SATELLITE STATUS
           </div>
@@ -776,7 +776,7 @@ export const SimulationScreen: React.FC = () => {
         </div>
 
         {/* Data Collection */}
-        <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
           <div style={{ padding: '10px 14px', borderBottom: '1px solid #1B283B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
             DATA COLLECTION
           </div>
@@ -797,7 +797,7 @@ export const SimulationScreen: React.FC = () => {
         </div>
 
         {/* Mission Alerts */}
-        <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
           <div style={{ padding: '10px 14px', borderBottom: '1px solid #1B283B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
             MISSION ALERTS
           </div>

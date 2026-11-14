@@ -281,7 +281,7 @@ export const AnalyticsScreen: React.FC = () => {
               height: 32,
               padding: '0 14px',
               border: '1px solid #2A3B52',
-              background: '#101A2A',
+              background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)',
               color: '#E8F0FA',
               fontFamily: "'IBM Plex Mono', monospace",
               fontSize: 11,
@@ -297,7 +297,7 @@ export const AnalyticsScreen: React.FC = () => {
               height: 32,
               padding: '0 14px',
               border: '1px solid #2A3B52',
-              background: '#101A2A',
+              background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)',
               color: '#E8F0FA',
               fontFamily: "'IBM Plex Mono', monospace",
               fontSize: 11,
@@ -316,7 +316,7 @@ export const AnalyticsScreen: React.FC = () => {
           <div
             key={idx}
             style={{
-              background: '#101A2A',
+              background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)',
               border: '1px solid #1B283B',
               borderRadius: 4,
               padding: '12px 14px',
@@ -334,7 +334,7 @@ export const AnalyticsScreen: React.FC = () => {
       </div>
 
       {/* Saved Designs & Local Leaderboard */}
-      <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+      <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid #1B283B' }}>
           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
             SAVED DESIGNS &amp; LOCAL LEADERBOARD
@@ -439,7 +439,7 @@ export const AnalyticsScreen: React.FC = () => {
                 minWidth: 0,
                 display: 'flex',
                 flexDirection: 'column',
-                background: '#0B1220',
+                background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)',
                 border: '1px solid #1B283B',
                 borderRadius: 3,
                 padding: '0 10px',
@@ -489,7 +489,7 @@ export const AnalyticsScreen: React.FC = () => {
           <div
             key={c.key}
             style={{
-              background: '#101A2A',
+              background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)',
               border: '1px solid #1B283B',
               borderRadius: 4,
               padding: '10px 12px',
@@ -520,7 +520,7 @@ export const AnalyticsScreen: React.FC = () => {
           <div
             key={c.key}
             style={{
-              background: '#101A2A',
+              background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)',
               border: '1px solid #1B283B',
               borderRadius: 4,
               padding: '10px 12px',
@@ -543,7 +543,7 @@ export const AnalyticsScreen: React.FC = () => {
       </div>
 
       {/* Event History Table */}
-      <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+      <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
         <div style={{ padding: '10px 14px', borderBottom: '1px solid #1B283B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
           EVENT HISTORY · DECISIONS · SYSTEM FAILURES
         </div>

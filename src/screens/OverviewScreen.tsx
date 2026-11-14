@@ -252,7 +252,7 @@ export const OverviewScreen: React.FC = () => {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 12 }}>
         <div
           style={{
-            background: '#101A2A',
+            background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)',
             border: '1px solid #1B283B',
             borderRadius: 4,
             padding: '14px 16px',
@@ -270,7 +270,7 @@ export const OverviewScreen: React.FC = () => {
 
         <div
           style={{
-            background: '#101A2A',
+            background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)',
             border: '1px solid #1B283B',
             borderRadius: 4,
             padding: '14px 16px',
@@ -290,7 +290,7 @@ export const OverviewScreen: React.FC = () => {
 
         <div
           style={{
-            background: '#101A2A',
+            background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)',
             border: '1px solid #1B283B',
             borderRadius: 4,
             padding: '14px 16px',
@@ -310,7 +310,7 @@ export const OverviewScreen: React.FC = () => {
                 width: 26,
                 height: 26,
                 border: '1px solid #2A3B52',
-                background: '#0B1220',
+                background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)',
                 color: '#E8F0FA',
                 borderRadius: 2,
                 cursor: started ? 'default' : 'pointer',
@@ -330,7 +330,7 @@ export const OverviewScreen: React.FC = () => {
                 width: 26,
                 height: 26,
                 border: '1px solid #2A3B52',
-                background: '#0B1220',
+                background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)',
                 color: '#E8F0FA',
                 borderRadius: 2,
                 cursor: started ? 'default' : 'pointer',
@@ -346,7 +346,7 @@ export const OverviewScreen: React.FC = () => {
 
         <div
           style={{
-            background: '#101A2A',
+            background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)',
             border: '1px solid #1B283B',
             borderRadius: 4,
             padding: '14px 16px',
@@ -368,7 +368,7 @@ export const OverviewScreen: React.FC = () => {
       {/* Mission Setup & Trade-offs Drawer */}
       <div
         style={{
-          background: '#101A2A',
+          background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)',
           border: '1px solid #1B283B',
           borderRadius: 4,
           display: 'flex',
@@ -425,7 +425,7 @@ export const OverviewScreen: React.FC = () => {
                   key={g.key}
                   title={g.tip}
                   style={{
-                    background: '#0B1220',
+                    background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)',
                     border: '1px solid #1B283B',
                     borderRadius: 3,
                     padding: '8px 10px',
@@ -487,7 +487,7 @@ export const OverviewScreen: React.FC = () => {
               {/* 1. Scenarios */}
               <div
                 style={{
-                  background: '#0B1220',
+                  background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)',
                   border: '1px solid #1B283B',
                   borderRadius: 3,
                   padding: 12,
@@ -509,7 +509,7 @@ export const OverviewScreen: React.FC = () => {
                       style={{
                         padding: '9px 11px',
                         border: `1px solid ${on ? CC.cyan : '#1B283B'}`,
-                        background: on ? 'rgba(85,221,224,0.08)' : '#0B1220',
+                        background: on ? 'rgba(85,221,224,0.08)' : 'rgba(11, 18, 32, 0.32)',
                         borderRadius: 3,
                         cursor: started ? 'default' : 'pointer',
                         display: 'flex',
@@ -530,7 +530,7 @@ export const OverviewScreen: React.FC = () => {
               {/* 2. Orbit & Launch Vehicle */}
               <div
                 style={{
-                  background: '#0B1220',
+                  background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)',
                   border: '1px solid #1B283B',
                   borderRadius: 3,
                   padding: 12,
@@ -588,7 +588,7 @@ export const OverviewScreen: React.FC = () => {
                         gap: 8,
                         padding: '8px 11px',
                         border: `1px solid ${on ? CC.cyan : '#1B283B'}`,
-                        background: on ? 'rgba(85,221,224,0.08)' : '#0B1220',
+                        background: on ? 'rgba(85,221,224,0.08)' : 'rgba(11, 18, 32, 0.32)',
                         borderRadius: 3,
                         cursor: started ? 'default' : 'pointer'
                       }}
@@ -631,7 +631,7 @@ export const OverviewScreen: React.FC = () => {
               {/* 3. Component Trade-offs */}
               <div
                 style={{
-                  background: '#0B1220',
+                  background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)',
                   border: '1px solid #1B283B',
                   borderRadius: 3,
                   padding: 12,
@@ -717,7 +717,7 @@ export const OverviewScreen: React.FC = () => {
       {/* Middle Row: Left: Time Dilation, Center: Black Hole, Right: Environment */}
       <div style={{ display: 'grid', gridTemplateColumns: '330px minmax(0,1fr) 300px', gap: 12 }}>
         {/* Left: Time Dilation */}
-        <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
           <div
             style={{
               display: 'flex',
@@ -738,13 +738,13 @@ export const OverviewScreen: React.FC = () => {
           </div>
           <div style={{ padding: 14, display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-              <div style={{ background: '#0B1220', border: '1px solid #1B283B', borderRadius: 3, padding: '9px 10px', display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <div style={{ background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)', border: '1px solid #1B283B', borderRadius: 3, padding: '9px 10px', display: 'flex', flexDirection: 'column', gap: 3 }}>
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9.5, color: '#8FA3B8', letterSpacing: '.06em' }}>
                   REFERENCE CLOCK
                 </div>
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 16 }}>{hms(sim.step)}</div>
               </div>
-              <div style={{ background: '#0B1220', border: '1px solid #1B283B', borderRadius: 3, padding: '9px 10px', display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <div style={{ background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)', border: '1px solid #1B283B', borderRadius: 3, padding: '9px 10px', display: 'flex', flexDirection: 'column', gap: 3 }}>
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9.5, color: '#8FA3B8', letterSpacing: '.06em' }}>
                   PROBE CLOCK
                 </div>
@@ -794,7 +794,7 @@ export const OverviewScreen: React.FC = () => {
               <CanvasView kind="td" style={{ width: '100%', height: 130 }} />
             </div>
 
-            <div style={{ background: '#0B1220', border: '1px solid #1B283B', borderRadius: 3, padding: 10, display: 'flex', flexDirection: 'column', gap: 4, fontFamily: "'IBM Plex Mono', monospace" }}>
+            <div style={{ background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)', border: '1px solid #1B283B', borderRadius: 3, padding: 10, display: 'flex', flexDirection: 'column', gap: 4, fontFamily: "'IBM Plex Mono', monospace" }}>
               <div style={{ fontSize: 14 }}>dτ/dt = √(1 − Rs/r)</div>
               <div style={{ fontSize: 11, color: '#8FA3B8' }}>
                 √(1 − 1/{f2(p.r)}) = {P.dil.toFixed(5)}
@@ -804,7 +804,7 @@ export const OverviewScreen: React.FC = () => {
         </div>
 
         {/* Center: Black Hole Canvas */}
-        <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+        <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
           <div
             style={{
               display: 'flex',
@@ -879,7 +879,7 @@ export const OverviewScreen: React.FC = () => {
         </div>
 
         {/* Right: Environment quick overview */}
-        <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
           <div
             style={{
               display: 'flex',
@@ -934,7 +934,7 @@ export const OverviewScreen: React.FC = () => {
       {/* Bottom 4 Columns: Swarm, Timeline, GRRT Preview, Telemetry Chart */}
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1.4fr)', gap: 12 }}>
         {/* Swarm Network summary */}
-        <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
           <div style={{ padding: '10px 14px', borderBottom: '1px solid #1B283B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
             SWARM NETWORK
           </div>
@@ -955,7 +955,7 @@ export const OverviewScreen: React.FC = () => {
         </div>
 
         {/* Mission Event Timeline */}
-        <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
           <div style={{ padding: '10px 14px', borderBottom: '1px solid #1B283B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
             MISSION EVENT TIMELINE
           </div>
@@ -972,7 +972,7 @@ export const OverviewScreen: React.FC = () => {
         </div>
 
         {/* GRRT Preview */}
-        <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
           <div
             style={{
               display: 'flex',
@@ -1009,7 +1009,7 @@ export const OverviewScreen: React.FC = () => {
         </div>
 
         {/* Mission Telemetry Timeline Chart */}
-        <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
           <div
             style={{
               display: 'flex',

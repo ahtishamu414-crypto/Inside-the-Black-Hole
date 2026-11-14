@@ -182,7 +182,7 @@ export const SwarmScreen: React.FC = () => {
           <div
             key={idx}
             style={{
-              background: '#101A2A',
+              background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)',
               border: '1px solid #1B283B',
               borderRadius: 4,
               padding: '12px 14px',
@@ -215,7 +215,7 @@ export const SwarmScreen: React.FC = () => {
       {/* Main Grid: Left = Canvas & Controls, Right = Inspector & Causality Note */}
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 320px', gap: 12 }}>
         {/* Left Container */}
-        <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+        <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
           {/* Top Control Bar */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderBottom: '1px solid #1B283B', flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', border: '1px solid #2A3B52', borderRadius: 2 }}>
@@ -225,7 +225,7 @@ export const SwarmScreen: React.FC = () => {
                   width: 30,
                   height: 28,
                   border: 'none',
-                  background: '#0B1220',
+                  background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)',
                   color: '#E8F0FA',
                   cursor: 'pointer',
                   fontFamily: "'IBM Plex Mono', monospace"
@@ -255,7 +255,7 @@ export const SwarmScreen: React.FC = () => {
                   width: 30,
                   height: 28,
                   border: 'none',
-                  background: '#0B1220',
+                  background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)',
                   color: '#E8F0FA',
                   cursor: 'pointer',
                   fontFamily: "'IBM Plex Mono', monospace"
@@ -275,7 +275,7 @@ export const SwarmScreen: React.FC = () => {
                   width: 190,
                   height: 28,
                   border: 'none',
-                  background: '#0B1220',
+                  background: 'rgba(11, 18, 32, 0.32)', backdropFilter: 'blur(8px)',
                   color: '#E8F0FA',
                   padding: '0 10px',
                   fontFamily: "'IBM Plex Mono', monospace",
@@ -290,7 +290,7 @@ export const SwarmScreen: React.FC = () => {
                   padding: '0 10px',
                   border: 'none',
                   borderLeft: '1px solid #2A3B52',
-                  background: '#101A2A',
+                  background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)',
                   color: '#55DDE0',
                   cursor: 'pointer',
                   fontFamily: "'IBM Plex Mono', monospace",
@@ -410,7 +410,7 @@ export const SwarmScreen: React.FC = () => {
 
         {/* Right Sidebar: Selected Node & Guardrails */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
             <div style={{ padding: '10px 14px', borderBottom: '1px solid #1B283B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
               SELECTED NODE
             </div>
@@ -460,7 +460,7 @@ export const SwarmScreen: React.FC = () => {
             )}
           </div>
 
-          <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, padding: 14, display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, padding: 14, display: 'flex', flexDirection: 'column', gap: 8 }}>
             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
               CAUSALITY CONSTRAINT
             </div>

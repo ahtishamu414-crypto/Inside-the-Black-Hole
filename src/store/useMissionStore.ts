@@ -70,9 +70,11 @@ export interface MissionStore {
   vt: number;
   swarmOut: SwarmOut;
   audioMuted: boolean;
+  bgEnabled: boolean;
 
   // Actions
   toggleAudio: () => void;
+  toggleBg: () => void;
   setScreen: (screen: ScreenId) => void;
   setSpeed: (speed: 1 | 2 | 5 | 10) => void;
   start: () => void;
@@ -125,10 +127,15 @@ export const useMissionStore = create<MissionStore>((set, get) => {
   // Read localStorage initial values
   let initialRuns: SavedRun[] = [];
   let guideSeen = false;
+  let initialBg = true;
   if (typeof window !== 'undefined') {
     try {
       initialRuns = JSON.parse(localStorage.getItem('bh5000_runs') || '[]');
       guideSeen = !!localStorage.getItem('bh5000_guide_seen');
+      const storedBg = localStorage.getItem('bh5000_bg');
+      if (storedBg !== null) {
+        initialBg = storedBg === '1';
+      }
     } catch (e) {}
   }
 
@@ -218,10 +225,19 @@ export const useMissionStore = create<MissionStore>((set, get) => {
     vt: 0,
     swarmOut: { pts: [] },
     audioMuted: soundManager.getMuted(),
+    bgEnabled: initialBg,
 
     toggleAudio: () => {
       const muted = soundManager.toggleMute();
       set({ audioMuted: muted });
+    },
+
+    toggleBg: () => {
+      const next = !get().bgEnabled;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('bh5000_bg', next ? '1' : '0');
+      }
+      set({ bgEnabled: next });
     },
 
     setScreen: (screen: ScreenId) => set({ screen }),

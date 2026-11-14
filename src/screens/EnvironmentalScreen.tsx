@@ -312,7 +312,7 @@ export const EnvironmentalScreen: React.FC = () => {
         {/* Left Column */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {/* Model Inputs */}
-          <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
             <div style={{ padding: '10px 14px', borderBottom: '1px solid #1B283B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
               MODEL INPUTS
             </div>
@@ -340,7 +340,7 @@ export const EnvironmentalScreen: React.FC = () => {
           </div>
 
           {/* Safe Observation Distance */}
-          <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
             <div style={{ padding: '10px 14px', borderBottom: '1px solid #1B283B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
               SAFE OBSERVATION DISTANCE
             </div>
@@ -388,7 +388,7 @@ export const EnvironmentalScreen: React.FC = () => {
               <div
                 key={g.key}
                 style={{
-                  background: '#101A2A',
+                  background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)',
                   border: '1px solid #1B283B',
                   borderRadius: 4,
                   padding: 12,
@@ -434,7 +434,7 @@ export const EnvironmentalScreen: React.FC = () => {
           </div>
 
           {/* Live Consequences Banner */}
-          <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, display: 'flex', flexDirection: 'column' }}>
             <div style={{ padding: '10px 14px', borderBottom: '1px solid #1B283B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
               LIVE CONSEQUENCES · PER SIMULATION STEP
             </div>
@@ -452,7 +452,7 @@ export const EnvironmentalScreen: React.FC = () => {
 
           {/* 4 Environment Charts */}
           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: 12 }}>
-            <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: 6 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, letterSpacing: '.06em', color: '#8FA3B8' }}>
                 <span>RADIATION EXPOSURE · SHIELD</span>
                 <span>amber exposure · green shield · red limit</span>
@@ -462,7 +462,7 @@ export const EnvironmentalScreen: React.FC = () => {
               </div>
             </div>
 
-            <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: 6 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, letterSpacing: '.06em', color: '#8FA3B8' }}>
                 <span>TIDAL STRESS · CHASSIS</span>
                 <span>amber stress · green chassis</span>
@@ -472,7 +472,7 @@ export const EnvironmentalScreen: React.FC = () => {
               </div>
             </div>
 
-            <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: 6 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, letterSpacing: '.06em', color: '#8FA3B8' }}>
                 <span>TEMPERATURE (K)</span>
                 <span>red = 450 K</span>
@@ -482,7 +482,7 @@ export const EnvironmentalScreen: React.FC = () => {
               </div>
             </div>
 
-            <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: 6 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, letterSpacing: '.06em', color: '#8FA3B8' }}>
                 <span>POWER · COMMS</span>
                 <span>cyan battery · grey comms</span>
@@ -494,7 +494,7 @@ export const EnvironmentalScreen: React.FC = () => {
           </div>
 
           {/* Formulas */}
-          <div style={{ background: '#101A2A', border: '1px solid #1B283B', borderRadius: 4, padding: '14px 16px', display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: 16 }}>
+          <div style={{ background: 'rgba(16, 26, 42, 0.38)', backdropFilter: 'blur(10px)', border: '1px solid #1B283B', borderRadius: 4, padding: '14px 16px', display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: 16 }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '.08em', color: '#8FA3B8' }}>
                 TIDAL ACCELERATION
