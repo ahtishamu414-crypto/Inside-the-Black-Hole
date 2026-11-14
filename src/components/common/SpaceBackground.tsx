@@ -204,8 +204,8 @@ export const SpaceBackground: React.FC = () => {
       }
 
       // Drift calculation tied to simulation
-      // Stars drift only while status is RUNNING; PAUSED and READY drift at 15% speed
-      const isRunning = simStatus === 'RUNNING' && !state.sim.active;
+      // Stars drift only while status is RUNNING and landing is complete; PAUSED and READY drift at 15% speed
+      const isRunning = simStatus === 'RUNNING' && !state.sim.active && state.landingDone;
       const statusFactor = isRunning ? 1.0 : 0.15;
       const speedFactor = 1 + 0.15 * simSpeed;
       const moveFactor = statusFactor * speedFactor * dt;

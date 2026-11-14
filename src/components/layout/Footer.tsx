@@ -5,6 +5,7 @@ import { DIFF, SCEN, CC } from '../../sim';
 export const Footer: React.FC = () => {
   const sim = useMissionStore(s => s.sim);
   const openSources = useMissionStore(s => s.openSources);
+  const setLandingDone = useMissionStore(s => s.setLandingDone);
 
   const cf = sim.cfg;
   const DF = DIFF[cf.diff];
@@ -52,6 +53,32 @@ export const Footer: React.FC = () => {
       </span>
       <span>{footText}</span>
       <div style={{ flex: 1 }} />
+      <button
+        onClick={() => setLandingDone(false)}
+        style={{
+          height: 22,
+          padding: '0 10px',
+          border: '1px solid #2A3B52',
+          background: 'transparent',
+          color: '#8FA3B8',
+          fontFamily: "'IBM Plex Mono', monospace",
+          fontSize: 10,
+          letterSpacing: '.05em',
+          borderRadius: 2,
+          cursor: 'pointer'
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.color = '#55DDE0';
+          e.currentTarget.style.borderColor = '#55DDE0';
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.color = '#8FA3B8';
+          e.currentTarget.style.borderColor = '#2A3B52';
+        }}
+      >
+        REPLAY LAUNCH
+      </button>
+
       <button
         onClick={openSources}
         style={{

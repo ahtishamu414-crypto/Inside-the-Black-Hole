@@ -13,6 +13,7 @@ import { VoteModal } from './components/modals/VoteModal';
 import { GuideModal } from './components/modals/GuideModal';
 import { SourcesModal } from './components/modals/SourcesModal';
 import { SpaceBackground } from './components/common/SpaceBackground';
+import { LandingScreen } from './components/landing/LandingScreen';
 
 import { OverviewScreen } from './screens/OverviewScreen';
 import { SwarmScreen } from './screens/SwarmScreen';
@@ -49,6 +50,7 @@ export const App: React.FC = () => {
 
   const screen = useMissionStore((s) => s.screen);
   const sim = useMissionStore((s) => s.sim);
+  const landingDone = useMissionStore((s) => s.landingDone);
   const toggleCrew = useMissionStore((s) => s.toggleCrew);
   const openVote = useMissionStore((s) => s.openVote);
 
@@ -80,6 +82,7 @@ export const App: React.FC = () => {
 
   return (
     <>
+      {!landingDone && <LandingScreen />}
       <SpaceBackground />
       <div
         style={{

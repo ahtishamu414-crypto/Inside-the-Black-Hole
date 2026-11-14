@@ -71,10 +71,12 @@ export interface MissionStore {
   swarmOut: SwarmOut;
   audioMuted: boolean;
   bgEnabled: boolean;
+  landingDone: boolean;
 
   // Actions
   toggleAudio: () => void;
   toggleBg: () => void;
+  setLandingDone: (done: boolean) => void;
   setScreen: (screen: ScreenId) => void;
   setSpeed: (speed: 1 | 2 | 5 | 10) => void;
   start: () => void;
@@ -226,6 +228,9 @@ export const useMissionStore = create<MissionStore>((set, get) => {
     swarmOut: { pts: [] },
     audioMuted: soundManager.getMuted(),
     bgEnabled: initialBg,
+    landingDone: false,
+
+    setLandingDone: (landingDone: boolean) => set({ landingDone }),
 
     toggleAudio: () => {
       const muted = soundManager.toggleMute();
