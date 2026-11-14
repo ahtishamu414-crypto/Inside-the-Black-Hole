@@ -320,15 +320,30 @@ async function createCinematicVideo() {
   await browser.close();
   console.log(`Captured ${frameIndex} frames. Synthesizing audio and encoding cinematic MP4...`);
 
-  // Generate a multi-layered cinematic space drone audio track with FFmpeg
-  // Layer 1: 55Hz deep sub-bass drone
-  // Layer 2: 110Hz harmonic pad with chorus/flanger
-  // Layer 3: High-frequency 880Hz subtle ping accents
+  // Multi-layered game simulator soundtrack:
+  // - Cosmic sub-bass & atmospheric space pad
+  // - Rhythmic telemetry pulses during active tracking
+  // - Two-tone alert siren during Radiation Spike (E01)
+  // - Tactical confirmation chime
+  // - Celestial major-chord fanfare during Mission Accomplished
   const duration = (frameIndex / FPS).toFixed(2);
+  const audioExpr = [
+    // Layer 1: Sub-bass drone & harmonic pad
+    '0.20*sin(2*PI*55*t) + 0.08*sin(2*PI*110*t) + 0.05*sin(2*PI*196*t) + 0.04*sin(2*PI*246.9*t)',
+    // Layer 2: Telemetry pulse (active during sim runtime: 7s - 25s)
+    '+ 0.03*sin(2*PI*659.25*t)*gt(mod(t\\,0.7)\\,0.65)*between(t\\,7\\,25)',
+    // Layer 3: Radiation Spike warning siren (25s - 27.5s)
+    '+ 0.12*(sin(2*PI*880*t)*between(mod(t-25\\,0.5)\\,0\\,0.25) + sin(2*PI*660*t)*between(mod(t-25\\,0.5)\\,0.25\\,0.5))*between(t\\,25\\,27.5)',
+    // Layer 4: Tactical decision confirmation chime (27.5s - 29.5s)
+    '+ 0.10*sin(2*PI*1174.66*t)*exp(-2.5*(t-27.5))*between(t\\,27.5\\,29.5)',
+    // Layer 5: Mission Accomplished celestial fanfare (30s - 39s)
+    '+ 0.09*(sin(2*PI*261.63*t) + 0.8*sin(2*PI*329.63*t) + 0.8*sin(2*PI*392*t) + 0.6*sin(2*PI*523.25*t))*between(t\\,30\\,39)'
+  ].join('');
+
   const audioFilter = `
-    aevalsrc=exprs='0.25*sin(2*PI*55*t)+0.12*sin(2*PI*110*t)+0.06*sin(2*PI*220*t+sin(2*PI*0.2*t))+0.02*sin(2*PI*880*t)*gt(mod(t\\,3)\\,2.9)':s=44100:d=${duration},
-    lowpass=f=400,
-    afade=t=in:ss=0:d=2.0,
+    aevalsrc=exprs='${audioExpr}':s=44100:d=${duration},
+    lowpass=f=950,
+    afade=t=in:ss=0:d=1.5,
     afade=t=out:st=${duration - 2}:d=2.0
   `.replace(/\s+/g, '');
 

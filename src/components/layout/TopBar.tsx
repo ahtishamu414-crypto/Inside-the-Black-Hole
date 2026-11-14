@@ -11,6 +11,8 @@ export const TopBar: React.FC = () => {
   const stepOnce = useMissionStore(s => s.stepOnce);
   const reset = useMissionStore(s => s.reset);
   const setSpeed = useMissionStore(s => s.setSpeed);
+  const audioMuted = useMissionStore(s => s.audioMuted);
+  const toggleAudio = useMissionStore(s => s.toggleAudio);
 
   const P = phys(sim);
   const opPct = (P.op / P.ext) * 100;
@@ -350,6 +352,31 @@ export const TopBar: React.FC = () => {
           );
         })}
       </div>
+
+      <button
+        onClick={toggleAudio}
+        title={audioMuted ? 'Unmute Simulator Soundtrack & SFX' : 'Mute Simulator Soundtrack & SFX'}
+        style={{
+          height: 28,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 6,
+          padding: '0 10px',
+          border: `1px solid ${audioMuted ? '#2A3B52' : '#55DDE0'}`,
+          background: audioMuted ? '#101A2A' : 'rgba(85,221,224,0.12)',
+          color: audioMuted ? '#8FA3B8' : '#55DDE0',
+          fontFamily: "'IBM Plex Mono', monospace",
+          fontSize: 11,
+          letterSpacing: '.06em',
+          borderRadius: 2,
+          cursor: 'pointer',
+          flexShrink: 0,
+          transition: 'all 0.2s ease'
+        }}
+      >
+        <span style={{ fontSize: 13, lineHeight: 1 }}>{audioMuted ? '🔇' : '🔊'}</span>
+        <span>{audioMuted ? 'MUTED' : 'AUDIO'}</span>
+      </button>
 
       <div
         style={{

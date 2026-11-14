@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useMissionStore } from './store/useMissionStore';
+import { soundManager } from './audio/soundManager';
 import { useAnimationLoop } from './hooks/useAnimationLoop';
 import { TopBar } from './components/layout/TopBar';
 import { GameBar } from './components/layout/GameBar';
@@ -29,6 +30,20 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     (window as any).useMissionStore = useMissionStore;
+    (window as any).soundManager = soundManager;
+
+    const handleFirstGesture = () => {
+      soundManager.init();
+      window.removeEventListener('click', handleFirstGesture);
+      window.removeEventListener('keydown', handleFirstGesture);
+    };
+    window.addEventListener('click', handleFirstGesture, { once: true });
+    window.addEventListener('keydown', handleFirstGesture, { once: true });
+
+    return () => {
+      window.removeEventListener('click', handleFirstGesture);
+      window.removeEventListener('keydown', handleFirstGesture);
+    };
   }, []);
 
   const screen = useMissionStore((s) => s.screen);

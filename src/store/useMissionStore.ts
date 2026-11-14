@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { soundManager } from '../audio/soundManager';
 import {
   SimulationState,
   SimParams,
@@ -68,8 +69,10 @@ export interface MissionStore {
   saveMsg: string;
   vt: number;
   swarmOut: SwarmOut;
+  audioMuted: boolean;
 
   // Actions
+  toggleAudio: () => void;
   setScreen: (screen: ScreenId) => void;
   setSpeed: (speed: 1 | 2 | 5 | 10) => void;
   start: () => void;
@@ -140,6 +143,20 @@ export const useMissionStore = create<MissionStore>((set, get) => {
         const next = advance(state.sim);
         if (next) {
           const finished = next.status === 'COMPLETED' || next.status === 'FAILED';
+          if (finished) {
+            if (next.status === 'COMPLETED') {
+              soundManager.playSuccess();
+              soundManager.setMode('victory');
+            } else {
+              soundManager.playFailure();
+              soundManager.setMode('failure');
+            }
+          } else if (next.active) {
+            soundManager.playAlarm();
+            soundManager.setMode('alert');
+          } else {
+            soundManager.playStep();
+          }
           set({
             sim: next,
             screen: finished ? 'outcome' : state.screen
@@ -200,6 +217,12 @@ export const useMissionStore = create<MissionStore>((set, get) => {
     saveMsg: '',
     vt: 0,
     swarmOut: { pts: [] },
+    audioMuted: soundManager.getMuted(),
+
+    toggleAudio: () => {
+      const muted = soundManager.toggleMute();
+      set({ audioMuted: muted });
+    },
 
     setScreen: (screen: ScreenId) => set({ screen }),
 
@@ -251,6 +274,8 @@ export const useMissionStore = create<MissionStore>((set, get) => {
     },
 
     launch: () => {
+      soundManager.playLaunch();
+      soundManager.setMode('running');
       set(s => ({
         sim: {
           ...s.sim,
@@ -278,6 +303,7 @@ export const useMissionStore = create<MissionStore>((set, get) => {
     },
 
     pause: () => {
+      soundManager.setMode('ambient');
       set(s => ({
         sim: { ...s.sim, status: 'PAUSED' }
       }));
@@ -286,6 +312,7 @@ export const useMissionStore = create<MissionStore>((set, get) => {
     resume: () => {
       const { sim } = get();
       if (sim.status === 'PAUSED' && !sim.active) {
+        soundManager.setMode('running');
         set(s => ({
           sim: { ...s.sim, status: 'RUNNING' }
         }));
@@ -300,6 +327,7 @@ export const useMissionStore = create<MissionStore>((set, get) => {
       }
       const next = advance({ ...sim, status: 'PAUSED' });
       if (next) {
+        soundManager.playStep();
         set({ sim: next });
       }
     },
@@ -310,6 +338,7 @@ export const useMissionStore = create<MissionStore>((set, get) => {
 
     resetTo: (no: number, targetScreen?: ScreenId) => {
       if (timerId) clearInterval(timerId);
+      soundManager.setMode('ambient');
       const currentCfg = get().sim.cfg;
       const f = createFreshState(no);
       f.cfg = currentCfg;
@@ -617,6 +646,8 @@ export const useMissionStore = create<MissionStore>((set, get) => {
       const { sim } = get();
       const res = applyDecision(sim, choiceIndex);
       if (res) {
+        soundManager.playDecision();
+        soundManager.setMode('running');
         set({ sim: res.nextState });
         get().toast('decision', res.toastText);
         if (res.nextState.status === 'RUNNING') {
